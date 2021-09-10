@@ -1,5 +1,4 @@
 ﻿using ControleEstoque.Api.Interface;
-using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Model;
@@ -10,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 
 namespace ControleEstoque.Api.Controllers
 {
@@ -40,67 +38,44 @@ namespace ControleEstoque.Api.Controllers
         /// <summary>
         ///     Realiza a busca de todas as movimentações.
         /// </summary>
-        /// <returns>Lista de movimentação</returns>
+        /// <returns>Lista de movimentações</returns>
         [HttpGet("listar")]
         [Produces("application/json")]
-        public RequestResponse ListarTodaMovimentacao()
+        public IActionResult ListarTodos()
         {
             try
             {
-                List<Movimentacao> lst = _movimentacaoService.GetAll();
+                List<MovimentacaoDTO> lst = _movimentacaoService.GetAll().Select(x => (MovimentacaoDTO)x).ToList();
 
-                var query =
-                    (from e in lst.AsQueryable<Movimentacao>()
-                     select new MovimentacaoDTO(e)).ToList();
-
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = string.Empty,
-                    Resultado = query
-                };
+                return Ok(lst);
             }
             catch (Exception e)
             {
-                _logger.LogError($"movimentacao/listar - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"movimentacao/listar - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
         /// <summary>
         ///     Realiza a criação de uma nova movimentação.
         /// </summary>
-        /// <param name="request">Objeto com os dados da movimentação</param>
+        /// <param name="model">Objeto com os dados da movimentação</param>
+        /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public RequestResponse CriarMovimentacao([FromBody] Movimentacao request)
+        public IActionResult Criar([FromBody] Movimentacao model)
         {
             try
             {
-                if (!_movimentacaoService.Create(request))
+                if (!_movimentacaoService.Create(model))
                     throw new Exception("Não foi possível incluir a movimentação.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Movimentação incluída com sucesso!",
-                    Resultado = null
-                };
+                return Ok(model);
             }
             catch (Exception e)
             {
-                _logger.LogError($"movimentacao/criar - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"movimentacao/criar - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
     }

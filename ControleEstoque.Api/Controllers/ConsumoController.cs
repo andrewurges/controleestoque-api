@@ -1,5 +1,4 @@
 ﻿using ControleEstoque.Api.Interface;
-using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Model;
@@ -11,7 +10,6 @@ using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 
 namespace ControleEstoque.Api.Controllers
 {
@@ -44,32 +42,18 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Lista de consumos</returns>
         [HttpGet("listar")]
         [Produces("application/json")]
-        public RequestResponse ListarTodoConsumo()
+        public IActionResult ListarTodos()
         {
             try
             {
-                List<Consumo> lst = _consumoService.GetAll();
+                List<ConsumoDTO> lst = _consumoService.GetAll().Select(x => (ConsumoDTO)x).ToList();
 
-                var query =
-                    (from e in lst.AsQueryable<Consumo>()
-                     select new ConsumoDTO(e)).ToList();
-
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = string.Empty,
-                    Resultado = query
-                };
+                return Ok(lst);
             }
             catch (Exception e)
             {
-                _logger.LogError($"consumo/listar - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"consumo/listar - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -80,7 +64,7 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto do consumo</returns>
         [HttpGet("listar/{id}")]
         [Produces("application/json")]
-        public RequestResponse ListarConsumo([FromRoute] string id)
+        public IActionResult Listar([FromRoute] string id)
         {
             try
             {
@@ -88,54 +72,35 @@ namespace ControleEstoque.Api.Controllers
                 if (consumo == null)
                     throw new Exception($"Consumo com o ID {id} não foi encontrado.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = string.Empty,
-                    Resultado = new ConsumoDTO(consumo)
-                };
+                return Ok((ConsumoDTO)consumo);
             }
             catch (Exception e)
             {
-                _logger.LogError($"consumo/listar/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"consumo/listar/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
         /// <summary>
         ///     Realiza a criação de um novo consumo.
         /// </summary>
-        /// <param name="request">Objeto com os dados do consumo</param>
+        /// <param name="model">Objeto com os dados do consumo</param>
+        /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public RequestResponse CriarConsumo([FromBody] Consumo request)
+        public IActionResult Criar([FromBody] Consumo model)
         {
             try
             {
-                if (!_consumoService.Create(request))
+                if (!_consumoService.Create(model))
                     throw new Exception("Não foi possível incluir o consumo.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Consumo incluído com sucesso!",
-                    Resultado = null
-                };
+                return Ok(model);
             }
             catch (Exception e)
             {
-                _logger.LogError($"consumo/criar - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"consumo/criar - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -143,10 +108,11 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a atualização do consumo do ID informado.
         /// </summary>
         /// <param name="id">Código identificador do consumo</param>
-        /// <param name="request">Objeto com os dados do consumo</param>
+        /// <param name="model">Objeto com os dados do consumo</param>
+        /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public RequestResponse AtualizarConsumo([FromRoute] string id, [FromBody] Consumo request)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] Consumo model)
         {
             try
             {
@@ -154,25 +120,15 @@ namespace ControleEstoque.Api.Controllers
                 if (consumo == null)
                     throw new Exception($"Consumo com o ID {id} não foi encontrado.");
 
-                if (!_consumoService.Update(ObjectId.Parse(id), request))
+                if (!_consumoService.Update(ObjectId.Parse(id), model))
                     throw new Exception("Não foi possível atualizar o consumo.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Consumo atualizado com sucesso!",
-                    Resultado = null
-                };
+                return Ok(model);
             }
             catch (Exception e)
             {
-                _logger.LogError($"consumo/atualizar/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"consumo/atualizar/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -180,9 +136,10 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a remoção do consumo através do ID informado.
         /// </summary>
         /// <param name="id">Código identificador do consumo</param>
+        /// <returns>Objeto removido</returns>
         [HttpDelete("remover/{id}")]
         [Produces("application/json")]
-        public RequestResponse RemoverConsumo([FromRoute] string id)
+        public IActionResult Remover([FromRoute] string id)
         {
             try
             {
@@ -193,22 +150,12 @@ namespace ControleEstoque.Api.Controllers
                 if (!_consumoService.Delete(ObjectId.Parse(id)))
                     throw new Exception("Não foi possível remover o consumo.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Consumo removido com sucesso!",
-                    Resultado = null
-                };
+                return Ok(consumo);
             }
             catch (Exception e)
             {
-                _logger.LogError($"consumo/remover/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"consumo/remover/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
     }

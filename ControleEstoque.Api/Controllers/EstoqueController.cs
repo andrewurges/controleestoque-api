@@ -1,5 +1,4 @@
 ﻿using ControleEstoque.Api.Interface;
-using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Model;
@@ -11,7 +10,6 @@ using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 
 namespace ControleEstoque.Api.Controllers
 {
@@ -44,30 +42,18 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Lista de estoques</returns>
         [HttpGet("listar")]
         [Produces("application/json")]
-        public IActionResult ListarTodoEstoque()
+        public IActionResult ListarTodos()
         {
             try
             {
-                List<Estoque> lst = _estoqueService.GetAll();
+                List<EstoqueDTO> lst = _estoqueService.GetAll().Select(x => (EstoqueDTO)x).ToList();
 
-                var query =
-                    (from e in lst.AsQueryable<Estoque>()
-                     select new EstoqueDTO(e)).ToList();
-
-                return Ok(query);
-                /*
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = string.Empty,
-                    Resultado = query
-                };
-                */
+                return Ok(lst);
             }
             catch (Exception e)
             {
-                _logger.LogError($"estoque/listar - {e.Message}");
-                throw;
+                _logger.LogError($"estoque/listar - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -78,7 +64,7 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto do consumo</returns>
         [HttpGet("listar/{id}")]
         [Produces("application/json")]
-        public RequestResponse ListarEstoque([FromRoute] string id)
+        public IActionResult Listar([FromRoute] string id)
         {
             try
             {
@@ -86,54 +72,35 @@ namespace ControleEstoque.Api.Controllers
                 if (estoque == null)
                     throw new Exception($"Estoque com o ID {id} não foi encontrado.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = string.Empty,
-                    Resultado = new EstoqueDTO(estoque)
-                };
+                return Ok((EstoqueDTO)estoque);
             }
             catch (Exception e)
             {
-                _logger.LogError($"estoque/listar/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"estoque/listar/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
         /// <summary>
         ///     Realiza a criação de um novo estoque.
         /// </summary>
-        /// <param name="request">Objeto com os dados do estoque</param>
+        /// <param name="model">Objeto com os dados do estoque</param>
+        /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public RequestResponse CriarEstoque([FromBody] Estoque request)
+        public IActionResult Criar([FromBody] Estoque model)
         {
             try
             {
-                if (!_estoqueService.Create(request))
+                if (!_estoqueService.Create(model))
                     throw new Exception("Não foi possível incluir o estoque.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Estoque incluído com sucesso!",
-                    Resultado = null
-                };
+                return Ok(model);
             }
             catch (Exception e)
             {
-                _logger.LogError($"estoque/criar - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"estoque/criar - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -141,10 +108,11 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a atualização do estoque do ID informado.
         /// </summary>
         /// <param name="id">Código identificador do estoque</param>
-        /// <param name="request">Objeto com os dados do estoque</param>
+        /// <param name="model">Objeto com os dados do estoque</param>
+        /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public RequestResponse AtualizarEstoque([FromRoute] string id, [FromBody] Estoque request)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] Estoque model)
         {
             try
             {
@@ -152,25 +120,15 @@ namespace ControleEstoque.Api.Controllers
                 if (estoque == null)
                     throw new Exception($"Estoque com o ID {id} não foi encontrado.");
 
-                if (!_estoqueService.Update(ObjectId.Parse(id), request))
+                if (!_estoqueService.Update(ObjectId.Parse(id), model))
                     throw new Exception("Não foi possível atualizar o estoque.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Estoque atualizado com sucesso!",
-                    Resultado = null
-                };
+                return Ok(model);
             }
             catch (Exception e)
             {
-                _logger.LogError($"estoque/atualizar/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"estoque/atualizar/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -178,9 +136,10 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a remoção do estoque através do ID informado.
         /// </summary>
         /// <param name="id">Código identificador do estoque</param>
+        /// /// <returns>Objeto removido</returns>
         [HttpDelete("remover/{id}")]
         [Produces("application/json")]
-        public RequestResponse RemoverEstoque([FromRoute] string id)
+        public IActionResult Remover([FromRoute] string id)
         {
             try
             {
@@ -191,22 +150,12 @@ namespace ControleEstoque.Api.Controllers
                 if (!_estoqueService.Delete(ObjectId.Parse(id)))
                     throw new Exception("Não foi possível remover o estoque.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Estoque removido com sucesso!",
-                    Resultado = null
-                };
+                return Ok(estoque);
             }
             catch (Exception e)
             {
-                _logger.LogError($"estoque/remover/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"estoque/remover/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
     }

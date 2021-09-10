@@ -1,5 +1,4 @@
 ﻿using ControleEstoque.Api.Interface;
-using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Model;
@@ -11,7 +10,6 @@ using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 
 namespace ControleEstoque.Api.Controllers
 {
@@ -44,32 +42,18 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Lista de receitas</returns>
         [HttpGet("listar")]
         [Produces("application/json")]
-        public RequestResponse ListarTodoReceita()
+        public IActionResult ListarTodos()
         {
             try
             {
-                List<Receita> lst = _receitaService.GetAll();
+                List<ReceitaDTO> lst = _receitaService.GetAll().Select(x => (ReceitaDTO)x).ToList();
 
-                var query =
-                    (from e in lst.AsQueryable<Receita>()
-                     select new ReceitaDTO(e)).ToList();
-
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = string.Empty,
-                    Resultado = query
-                };
+                return Ok(lst);
             }
             catch (Exception e)
             {
-                _logger.LogError($"receita/listar - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"receita/listar - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -80,7 +64,7 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto da receita</returns>
         [HttpGet("listar/{id}")]
         [Produces("application/json")]
-        public RequestResponse ListarReceita([FromRoute] string id)
+        public IActionResult Listar([FromRoute] string id)
         {
             try
             {
@@ -88,54 +72,35 @@ namespace ControleEstoque.Api.Controllers
                 if (receita == null)
                     throw new Exception($"Receita com o ID {id} não foi encontrado.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = string.Empty,
-                    Resultado = new ReceitaDTO(receita)
-                };
+                return Ok((ReceitaDTO)receita);
             }
             catch (Exception e)
             {
-                _logger.LogError($"receita/listar/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"receita/listar/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
         /// <summary>
         ///     Realiza a criação de uma nova receita.
         /// </summary>
-        /// <param name="request">Objeto com os dados da receita</param>
+        /// <param name="model">Objeto com os dados da receita</param>
+        /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public RequestResponse CriarReceita([FromBody] Receita request)
+        public IActionResult Criar([FromBody] Receita model)
         {
             try
             {
-                if (!_receitaService.Create(request))
+                if (!_receitaService.Create(model))
                     throw new Exception("Não foi possível incluir a receita.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Receita incluído com sucesso!",
-                    Resultado = null
-                };
+                return Ok(model);
             }
             catch (Exception e)
             {
-                _logger.LogError($"receita/criar - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"receita/criar - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -143,10 +108,11 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a atualização da receita do ID informado.
         /// </summary>
         /// <param name="id">Código identificador da receita</param>
-        /// <param name="request">Objeto com os dados da receita</param>
+        /// <param name="model">Objeto com os dados da receita</param>
+        /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public RequestResponse AtualizarReceita([FromRoute] string id, [FromBody] Receita request)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] Receita model)
         {
             try
             {
@@ -154,25 +120,15 @@ namespace ControleEstoque.Api.Controllers
                 if (receita == null)
                     throw new Exception($"Receita com o ID {id} não foi encontrado.");
 
-                if (!_receitaService.Update(ObjectId.Parse(id), request))
+                if (!_receitaService.Update(ObjectId.Parse(id), model))
                     throw new Exception("Não foi possível atualizar a receita.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Receita atualizado com sucesso!",
-                    Resultado = null
-                };
+                return Ok(model);
             }
             catch (Exception e)
             {
-                _logger.LogError($"receita/atualizar/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"receita/atualizar/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -180,9 +136,10 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a remoção da receita através do ID informado.
         /// </summary>
         /// <param name="id">Código identificador da receita</param>
+        /// <returns>Objeto removido</returns>
         [HttpDelete("remover/{id}")]
         [Produces("application/json")]
-        public RequestResponse RemoverReceita([FromRoute] string id)
+        public IActionResult Remover([FromRoute] string id)
         {
             try
             {
@@ -193,22 +150,12 @@ namespace ControleEstoque.Api.Controllers
                 if (!_receitaService.Delete(ObjectId.Parse(id)))
                     throw new Exception("Não foi possível remover a receita.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Receita removido com sucesso!",
-                    Resultado = null
-                };
+                return Ok(receita);
             }
             catch (Exception e)
             {
-                _logger.LogError($"receita/remover/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"receita/remover/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
     }

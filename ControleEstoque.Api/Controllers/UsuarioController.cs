@@ -51,111 +51,76 @@ namespace ControleEstoque.Api.Controllers
         /// <summary>
         ///     Realiza a autenticação na API.
         /// </summary>
-        /// <param name="request">Objeto com os dados do usuário</param>
+        /// <param name="model">Objeto com os dados do usuário</param>
         /// <returns>Token de autenticação do usuário</returns>
         [HttpPost("autenticar")]
         [Produces("application/json")]
         [AllowAnonymous]
-        public async Task<RequestResponse> Autenticar([FromBody] AutenticarRequest request)
+        public async Task<IActionResult> Autenticar([FromBody] AutenticarRequest model)
         {
             try
             {
-                var result = await _signInManager.PasswordSignInAsync(request.Email, request.Password, false, false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+
                 if (result.Succeeded)
                 {
-                    var appUser = _userManager.Users.SingleOrDefault(r => r.Email == request.Email);
+                    var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
 
-                    var token = AuthenticationHelper.GenerateJwtToken(request.Email, appUser, _configuration);
+                    var token = AuthenticationHelper.GenerateJwtToken(model.Email, appUser, _configuration);
 
-                    return new RequestResponse()
-                    {
-                        Status = HttpStatusCode.OK,
-                        Mensagem = string.Empty,
-                        Resultado = new AutenticarResponse(token, appUser.UserName, appUser.Name + " " + appUser.LastName)
-                    };
+                    return Ok(new AutenticarResponse(token, appUser.UserName, appUser.Name + " " + appUser.LastName));
                 }
 
-                _logger.LogError("Usuario/Autenticar - Bad Credentials");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.Unauthorized,
-                    Mensagem = "Bad Credentials",
-                    Resultado = null
-                };
+                throw new Exception("Bad Credentials");
             }
             catch (Exception e)
             {
-                _logger.LogError("Usuario/Autenticar - " + e.Message);
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError("Usuario/autenticar - " + e.InnerException);
+                return BadRequest(e.InnerException);
             }
         }
 
         /// <summary>
         ///     Realiza o cadastro de um novo e-mail na API.
         /// </summary>
-        /// <param name="request">Objeto com os dados do novo usuário</param>
+        /// <param name="model">Objeto com os dados do novo usuário</param>
         /// <returns>Novo usuário com o token de autenticação</returns>
         [HttpPost("registrar")]
         [Produces("application/json")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<RequestResponse> Registrar(RegistrarUsuarioRequest request)
+        public async Task<IActionResult> Registrar(RegistrarUsuarioRequest model)
         {
             try
             {
-                var user = await _userManager.FindByEmailAsync(request.Email);
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
-                    return new RequestResponse()
-                    {
-                        Status = HttpStatusCode.InternalServerError,
-                        Mensagem = "E-mail " + request.Email + " já cadastrado.",
-                        Resultado = null
-                    };
+                    throw new Exception($"E-mail {model.Email} já cadastrado.");
                 }
 
                 var newUser = new ApplicationUser
                 {
-                    Name = request.Name,
-                    LastName = request.LastName,
-                    UserName = request.Email,
-                    Email = request.Email,
+                    Name = model.Name,
+                    LastName = model.LastName,
+                    UserName = model.Email,
+                    Email = model.Email,
                 };
 
-                var result = await _userManager.CreateAsync(newUser, request.Password);
+                var result = await _userManager.CreateAsync(newUser, model.Password);
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(newUser, false);
-                    var token = AuthenticationHelper.GenerateJwtToken(request.Email, newUser, _configuration);
+                    var token = AuthenticationHelper.GenerateJwtToken(model.Email, newUser, _configuration);
 
-                    return new RequestResponse()
-                    {
-                        Status = HttpStatusCode.OK,
-                        Mensagem = "Usuário cadastrado com sucesso!",
-                        Resultado = new AutenticarResponse(token, newUser.Email, newUser.UserName)
-                    };
+                    return Ok(new AutenticarResponse(token, newUser.Email, newUser.UserName));
                 }
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = string.Join(",", result.Errors?.Select(error => error.Description)),
-                    Resultado = null
-                };
+                throw new Exception(string.Join(",", result.Errors?.Select(error => error.Description)));
             }
             catch (Exception e)
             {
-                _logger.LogError("Usuario/Registrar - " + e.Message);
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError("Usuario/registrar - " + e.InnerException);
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -163,55 +128,35 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a atualização de um usuário conforme o E-mail informado.
         /// </summary>
         /// <param name="email">E-mail do usuário a ser atualizado</param>
-        /// <param name="request">Objeto com os dados atualizados do usuário</param>
+        /// <param name="model">Objeto com os dados atualizados do usuário</param>
         [HttpPost("atualizar/{email}")]
         [Produces("application/json")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<RequestResponse> Atualizar(string email, AtualizarUsuarioRequest request)
+        public async Task<IActionResult> Atualizar(string email, AtualizarUsuarioRequest model)
         {
             try
             {
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    return new RequestResponse()
-                    {
-                        Status = HttpStatusCode.InternalServerError,
-                        Mensagem = "Usuário com e-mail " + email + " não foi encontrado.",
-                        Resultado = null
-                    };
+                    throw new Exception($"Usuário com e-mail {email} não foi encontrado.");
                 }
 
-                user.Name = request.Name;
-                user.LastName = request.LastName;
+                user.Name = model.Name;
+                user.LastName = model.LastName;
 
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    return new RequestResponse()
-                    {
-                        Status = HttpStatusCode.OK,
-                        Mensagem = "Usuário atualizado com sucesso!",
-                        Resultado = null
-                    };
+                    return Ok(model);
                 }
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = string.Join(",", result.Errors?.Select(error => error.Description)),
-                    Resultado = null
-                };
+                throw new Exception(string.Join(",", result.Errors?.Select(error => error.Description)));
             }
             catch (Exception e)
             {
-                _logger.LogError("Usuario/Atualizar - " + e.Message);
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError("Usuario/atualizar - " + e.InnerException);
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -219,73 +164,43 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a alteração da senha de um usuário conforme o E-mail informado.
         /// </summary>
         /// <param name="email">E-mail do usuário a ser atualizado</param>
-        /// <param name="request">Objeto com os dados da senha atual e nova</param>
+        /// <param name="model">Objeto com os dados da senha atual e nova</param>
         [HttpPost("trocar-senha/{email}")]
         [Produces("application/json")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<RequestResponse> TrocarSenha(string email, AlterarSenhaRequest request)
+        public async Task<IActionResult> TrocarSenha(string email, AlterarSenhaRequest model)
         {
             try
             {
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user == null)
                 {
-                    return new RequestResponse()
-                    {
-                        Status = HttpStatusCode.InternalServerError,
-                        Mensagem = "Usuário com e-mail " + email + " não foi encontrado.",
-                        Resultado = null
-                    };
+                    throw new Exception($"Usuário com e-mail {email} não foi encontrado.");
                 }
 
-                var senhaValida = await _userManager.CheckPasswordAsync(user, request.CurrentPassword);
+                var senhaValida = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
                 if (!senhaValida)
                 {
-                    return new RequestResponse()
-                    {
-                        Status = HttpStatusCode.InternalServerError,
-                        Mensagem = "A senha atual informada está incorreta.",
-                        Resultado = null
-                    };
+                    throw new Exception("A senha atual informada está incorreta.");
                 }
 
-                if (!request.NewPassword.Equals(request.ConfirmNewPassword))
+                if (!model.NewPassword.Equals(model.ConfirmNewPassword))
                 {
-                    return new RequestResponse()
-                    {
-                        Status = HttpStatusCode.InternalServerError,
-                        Mensagem = "A nova senha e a confirmação da senha não correspondem.",
-                        Resultado = null
-                    };
+                    throw new Exception("A nova senha e a confirmação da senha não correspondem.");
                 }
 
-                var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
                 if (result.Succeeded)
                 {
-                    return new RequestResponse()
-                    {
-                        Status = HttpStatusCode.OK,
-                        Mensagem = "Senha atualizada com sucesso!",
-                        Resultado = null
-                    };
+                    return Ok(model);
                 }
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = string.Join(",", result.Errors?.Select(error => error.Description)),
-                    Resultado = null
-                };
+                throw new Exception(string.Join(",", result.Errors?.Select(error => error.Description)));
             }
             catch (Exception e)
             {
-                _logger.LogError("Usuario/TrocarSenha - " + e.Message);
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError("Usuario/trocar-senha - " + e.InnerException);
+                return BadRequest(e.InnerException);
             }
         }
     }

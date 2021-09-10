@@ -1,5 +1,4 @@
 ﻿using ControleEstoque.Api.Interface;
-using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Model;
@@ -11,7 +10,6 @@ using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 
 namespace ControleEstoque.Api.Controllers
 {
@@ -44,32 +42,18 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Lista de produtos</returns>
         [HttpGet("listar")]
         [Produces("application/json")]
-        public RequestResponse ListarTodoProduto()
+        public IActionResult ListarTodos()
         {
             try
             {
-                List<Produto> lst = _produtoService.GetAll();
+                List<ProdutoDTO> lst = _produtoService.GetAll().Select(x => (ProdutoDTO)x).ToList();
 
-                var query =
-                    (from e in lst.AsQueryable<Produto>()
-                     select new ProdutoDTO(e)).ToList();
-
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = string.Empty,
-                    Resultado = query
-                };
+                return Ok(lst);
             }
             catch (Exception e)
             {
-                _logger.LogError($"produto/listar - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"produto/listar - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -80,7 +64,7 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto do produto</returns>
         [HttpGet("listar/{id}")]
         [Produces("application/json")]
-        public RequestResponse ListarProduto([FromRoute] string id)
+        public IActionResult Listar([FromRoute] string id)
         {
             try
             {
@@ -88,54 +72,35 @@ namespace ControleEstoque.Api.Controllers
                 if (produto == null)
                     throw new Exception($"Produto com o ID {id} não foi encontrado.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = string.Empty,
-                    Resultado = new ProdutoDTO(produto)
-                };
+                return Ok((ProdutoDTO)produto);
             }
             catch (Exception e)
             {
-                _logger.LogError($"produto/listar/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"produto/listar/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
         /// <summary>
         ///     Realiza a criação de um novo produto.
         /// </summary>
-        /// <param name="request">Objeto com os dados do produto</param>
+        /// <param name="model">Objeto com os dados do produto</param>
+        /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public RequestResponse CriarProduto([FromBody] Produto request)
+        public IActionResult Criar([FromBody] Produto model)
         {
             try
             {
-                if (!_produtoService.Create(request))
+                if (!_produtoService.Create(model))
                     throw new Exception("Não foi possível incluir o produto.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Produto incluído com sucesso!",
-                    Resultado = null
-                };
+                return Ok(model);
             }
             catch (Exception e)
             {
-                _logger.LogError($"produto/criar - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"produto/criar - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -143,10 +108,11 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a atualização do produto do ID informado.
         /// </summary>
         /// <param name="id">Código identificador do produto</param>
-        /// <param name="request">Objeto com os dados do produto</param>
+        /// <param name="model">Objeto com os dados do produto</param>
+        /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public RequestResponse AtualizarProduto([FromRoute] string id, [FromBody] Produto request)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] Produto model)
         {
             try
             {
@@ -154,25 +120,15 @@ namespace ControleEstoque.Api.Controllers
                 if (produto == null)
                     throw new Exception($"Produto com o ID {id} não foi encontrado.");
 
-                if (!_produtoService.Update(ObjectId.Parse(id), request))
+                if (!_produtoService.Update(ObjectId.Parse(id), model))
                     throw new Exception("Não foi possível atualizar o produto.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Produto atualizado com sucesso!",
-                    Resultado = null
-                };
+                return Ok(model);
             }
             catch (Exception e)
             {
-                _logger.LogError($"produto/atualizar/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"produto/atualizar/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
 
@@ -180,9 +136,10 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a remoção do produto através do ID informado.
         /// </summary>
         /// <param name="id">Código identificador do produto</param>
+        /// <returns>Objeto removido</returns>
         [HttpDelete("remover/{id}")]
         [Produces("application/json")]
-        public RequestResponse RemoverProduto([FromRoute] string id)
+        public IActionResult Remover([FromRoute] string id)
         {
             try
             {
@@ -193,22 +150,12 @@ namespace ControleEstoque.Api.Controllers
                 if (!_produtoService.Delete(ObjectId.Parse(id)))
                     throw new Exception("Não foi possível remover o produto.");
 
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.OK,
-                    Mensagem = "Produto removido com sucesso!",
-                    Resultado = null
-                };
+                return Ok(produto);
             }
             catch (Exception e)
             {
-                _logger.LogError($"produto/remover/{id} - {e.Message}");
-                return new RequestResponse()
-                {
-                    Status = HttpStatusCode.InternalServerError,
-                    Mensagem = e.Message,
-                    Resultado = null
-                };
+                _logger.LogError($"produto/remover/{id} - {e.InnerException}");
+                return BadRequest(e.InnerException);
             }
         }
     }

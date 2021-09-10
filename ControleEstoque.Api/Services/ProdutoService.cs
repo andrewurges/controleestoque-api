@@ -1,8 +1,8 @@
 ﻿using ControleEstoque.Api.Interface;
 using ControleEstoque.Api.Model;
-using ControleEstoque.Data.Interface;
 using ControleEstoque.Data.Model;
 using ControleEstoque.Data.Repositories;
+using ControleEstoque.Data.Repositories.Interface;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
