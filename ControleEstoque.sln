@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31313.79
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControleEstoque.Api", "ControleEstoque.Api\ControleEstoque.Api.csproj", "{252A83EB-E1DE-4A6E-B857-6BD800642A88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControleEstoque.Api", "ControleEstoque.Api\ControleEstoque.Api.csproj", "{252A83EB-E1DE-4A6E-B857-6BD800642A88}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{F926A73A-59E5-4D2D-B0DC-06547C9C5AC3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{5A54A1B5-0E05-4ED9-833B-C083E28E058D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControleEstoque.Data", "ControleEstoque.Data\ControleEstoque.Data.csproj", "{62945D93-A96A-4E73-9A42-91FF2F8AEB71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +21,17 @@ Global
 		{252A83EB-E1DE-4A6E-B857-6BD800642A88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{252A83EB-E1DE-4A6E-B857-6BD800642A88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{252A83EB-E1DE-4A6E-B857-6BD800642A88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62945D93-A96A-4E73-9A42-91FF2F8AEB71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62945D93-A96A-4E73-9A42-91FF2F8AEB71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62945D93-A96A-4E73-9A42-91FF2F8AEB71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62945D93-A96A-4E73-9A42-91FF2F8AEB71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{252A83EB-E1DE-4A6E-B857-6BD800642A88} = {F926A73A-59E5-4D2D-B0DC-06547C9C5AC3}
+		{62945D93-A96A-4E73-9A42-91FF2F8AEB71} = {5A54A1B5-0E05-4ED9-833B-C083E28E058D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4307146D-5AE4-4D74-A88F-D41FC9958323}
