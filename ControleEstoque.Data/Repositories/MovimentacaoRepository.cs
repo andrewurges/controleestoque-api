@@ -73,7 +73,9 @@ namespace ControleEstoque.Data.Repositories
             try
             {
                 Expression<Func<Movimentacao, bool>> filter = x => x.id.Equals(id);
-                var update = new UpdateDefinitionBuilder<Movimentacao>().Set(n => n, model);
+                var update = new UpdateDefinitionBuilder<Movimentacao>()
+                    .Set(n => n.tipo, model.tipo)
+                    .Set(n => n.itens, model.itens);
 
                 if (connection.GetCollection().FindOneAndUpdate(filter, update) != null)
                 {

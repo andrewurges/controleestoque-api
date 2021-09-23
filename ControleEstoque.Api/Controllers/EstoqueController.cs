@@ -53,8 +53,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"estoque/listar - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"estoque/listar - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
 
@@ -77,8 +77,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"estoque/listar/{id} - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"estoque/listar/{id} - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
 
@@ -109,8 +109,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"estoque/criar - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"estoque/criar - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
 
@@ -132,9 +132,9 @@ namespace ControleEstoque.Api.Controllers
 
                 estoque.descricao = model.descricao;
                 estoque.foto = model.foto;
-                estoque.quantidade_disponivel = model.quantidade_disponivel;
                 estoque.preco = model.preco;
                 estoque.unidade_medida = model.unidade_medida;
+                estoque.quantidade_disponivel = model.quantidade_disponivel;
 
                 if (!_estoqueService.Update(ObjectId.Parse(id), estoque))
                     throw new Exception("Não foi possível atualizar o estoque.");
@@ -143,8 +143,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"estoque/atualizar/{id} - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"estoque/atualizar/{id} - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
 
@@ -170,8 +170,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"estoque/remover/{id} - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"estoque/remover/{id} - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
     }

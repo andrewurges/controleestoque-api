@@ -52,8 +52,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"produto/listar - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"produto/listar - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
 
@@ -76,8 +76,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"produto/listar/{id} - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"produto/listar/{id} - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
 
@@ -99,8 +99,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"produto/criar - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"produto/criar - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
 
@@ -127,8 +127,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"produto/atualizar/{id} - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"produto/atualizar/{id} - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
 
@@ -154,8 +154,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"produto/remover/{id} - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"produto/remover/{id} - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
     }
