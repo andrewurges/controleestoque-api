@@ -10,31 +10,31 @@ using System.Linq.Expressions;
 
 namespace ControleEstoque.Api.Services
 {
-    public class ToDoService : IControleEstoqueService<ToDo>
+    public class PedidoService : IControleEstoqueService<Pedido>
     {
-        IControleEstoqueRepository<ToDo> _receitaRepository;
+        IControleEstoqueRepository<Pedido> _receitaRepository;
 
-        public ToDoService(IControleEstoqueSettings settings)
+        public PedidoService(IControleEstoqueSettings settings)
         {
-            _receitaRepository = new ToDoRepository(settings.MongoConnectionString, settings.MongoDatabaseName);
+            _receitaRepository = new PedidoRepository(settings.MongoConnectionString, settings.MongoDatabaseName);
         }
 
-        public ToDo Get(ObjectId id)
+        public Pedido Get(ObjectId id)
         {
             return _receitaRepository.Get(id);
         }
 
-        public List<ToDo> GetAll(Expression<Func<ToDo, bool>> where = null)
+        public List<Pedido> GetAll(Expression<Func<Pedido, bool>> where = null)
         {
             return _receitaRepository.GetAll(where);
         }
 
-        public bool Create(ToDo model)
+        public bool Create(Pedido model)
         {
             return _receitaRepository.Create(model);
         }
 
-        public bool Update(ObjectId id, ToDo model)
+        public bool Update(ObjectId id, Pedido model)
         {
             return _receitaRepository.Update(id, model);
         }

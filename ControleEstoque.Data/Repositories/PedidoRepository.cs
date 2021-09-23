@@ -10,18 +10,18 @@ using System.Linq.Expressions;
 
 namespace ControleEstoque.Data.Repositories
 {
-    public class ToDoRepository : IControleEstoqueRepository<ToDo>
+    public class PedidoRepository : IControleEstoqueRepository<Pedido>
     {
-        public static string collectionName = "ToDo";
+        public static string collectionName = "Pedido";
 
-        MongoConnection<ToDo> connection;
+        MongoConnection<Pedido> connection;
 
-        public ToDoRepository(string connectionString, string databaseName)
+        public PedidoRepository(string connectionString, string databaseName)
         {
-            connection = new MongoConnection<ToDo>(connectionString, databaseName, collectionName);
+            connection = new MongoConnection<Pedido>(connectionString, databaseName, collectionName);
         }
 
-        public ToDo Get(ObjectId id)
+        public Pedido Get(ObjectId id)
         {
             try
             {
@@ -29,11 +29,11 @@ namespace ControleEstoque.Data.Repositories
             }
             catch (MongoConnectionException e)
             {
-                return new ToDo();
+                return new Pedido();
             }
         }
 
-        public List<ToDo> GetAll(Expression<Func<ToDo, bool>> where = null)
+        public List<Pedido> GetAll(Expression<Func<Pedido, bool>> where = null)
         {
             try
             {
@@ -43,16 +43,16 @@ namespace ControleEstoque.Data.Repositories
                 }
                 else
                 {
-                    return connection.GetCollection().Find<ToDo>(where).ToList();
+                    return connection.GetCollection().Find<Pedido>(where).ToList();
                 }
             }
             catch (MongoConnectionException e)
             {
-                return new List<ToDo>();
+                return new List<Pedido>();
             }
         }
 
-        public bool Create(ToDo model)
+        public bool Create(Pedido model)
         {
             var status = false;
             try
@@ -67,13 +67,13 @@ namespace ControleEstoque.Data.Repositories
             return status;
         }
 
-        public bool Update(ObjectId id, ToDo model)
+        public bool Update(ObjectId id, Pedido model)
         {
             var status = false;
             try
             {
-                Expression<Func<ToDo, bool>> filter = x => x.id.Equals(id);
-                var update = new UpdateDefinitionBuilder<ToDo>().Set(n => n, model);
+                Expression<Func<Pedido, bool>> filter = x => x.id.Equals(id);
+                var update = new UpdateDefinitionBuilder<Pedido>().Set(n => n, model);
 
                 if (connection.GetCollection().FindOneAndUpdate(filter, update) != null)
                 {
@@ -93,7 +93,7 @@ namespace ControleEstoque.Data.Repositories
             var status = false;
             try
             {
-                Expression<Func<ToDo, bool>> filter = x => x.id.Equals(id);
+                Expression<Func<Pedido, bool>> filter = x => x.id.Equals(id);
 
                 if (connection.GetCollection().FindOneAndDelete(filter) != null)
                 {

@@ -14,128 +14,128 @@ using System.Linq;
 namespace ControleEstoque.Api.Controllers
 {
     /// <summary>
-    ///     Controller para gerenciar o To-Do do Controle de Estoque.
+    ///     Controller para gerenciar os pedidos do Controle de Estoque.
     /// </summary>
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [Produces("application/json")]
     [ApiController]
-    public class ToDoController : ControllerBase
+    public class PedidoController : ControllerBase
     {
-        private IControleEstoqueService<ToDo> _todoService;
-        private readonly ILogger<ToDoController> _logger;
+        private IControleEstoqueService<Pedido> _pedidoService;
+        private readonly ILogger<PedidoController> _logger;
 
         /// <summary>
         ///     Construtor da Controller
         /// </summary>
-        /// <param name="todoService"></param>
+        /// <param name="pedidoService"></param>
         /// <param name="logger"></param>
-        public ToDoController(ToDoService todoService, ILogger<ToDoController> logger)
+        public PedidoController(PedidoService pedidoService, ILogger<PedidoController> logger)
         {
-            _todoService = todoService;
+            _pedidoService = pedidoService;
             _logger = logger;
         }
 
         /// <summary>
-        ///     Realiza a busca de todos os itens do To-Do.
+        ///     Realiza a busca de todos os pedidos.
         /// </summary>
-        /// <returns>Lista de To-Do</returns>
+        /// <returns>Lista de pedidos</returns>
         [HttpGet("listar")]
         [Produces("application/json")]
         public IActionResult ListarTodos()
         {
             try
             {
-                List<ToDoDTO> lst = _todoService.GetAll().Select(x => (ToDoDTO)x).ToList();
+                List<PedidoDTO> lst = _pedidoService.GetAll().Select(x => (PedidoDTO)x).ToList();
 
                 return Ok(lst);
             }
             catch (Exception e)
             {
-                _logger.LogError($"todo/listar - {e.InnerException}");
+                _logger.LogError($"pedido/listar - {e.InnerException}");
                 return BadRequest(e.InnerException);
             }
         }
 
         /// <summary>
-        ///     Realiza a busca de um item do To-Do através do ID informado.
+        ///     Realiza a busca de um pedido através do ID informado.
         /// </summary>
-        /// <param name="id">Código identificador do To-Do</param>
-        /// <returns>Objeto da receita</returns>
+        /// <param name="id">Código identificador do pedido</param>
+        /// <returns>Objeto do pedido</returns>
         [HttpGet("listar/{id}")]
         [Produces("application/json")]
         public IActionResult Listar([FromRoute] string id)
         {
             try
             {
-                var todo = _todoService.Get(ObjectId.Parse(id));
+                var todo = _pedidoService.Get(ObjectId.Parse(id));
                 if (todo == null)
-                    throw new Exception($"To-Do com o ID {id} não foi encontrado.");
+                    throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                return Ok((ToDoDTO)todo);
+                return Ok((PedidoDTO)todo);
             }
             catch (Exception e)
             {
-                _logger.LogError($"todo/listar/{id} - {e.InnerException}");
+                _logger.LogError($"pedido/listar/{id} - {e.InnerException}");
                 return BadRequest(e.InnerException);
             }
         }
 
         /// <summary>
-        ///     Realiza a criação de um novo To-Do.
+        ///     Realiza a criação de um novo pedido.
         /// </summary>
-        /// <param name="model">Objeto com os dados do To-Do</param>
+        /// <param name="model">Objeto com os dados do pedido</param>
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] ToDo model)
+        public IActionResult Criar([FromBody] Pedido model)
         {
             try
             {
-                if (!_todoService.Create(model))
-                    throw new Exception("Não foi possível incluir a receita.");
+                if (!_pedidoService.Create(model))
+                    throw new Exception("Não foi possível incluir o pedido.");
 
                 return Ok(model);
             }
             catch (Exception e)
             {
-                _logger.LogError($"receita/criar - {e.InnerException}");
+                _logger.LogError($"pedido/criar - {e.InnerException}");
                 return BadRequest(e.InnerException);
             }
         }
 
         /// <summary>
-        ///     Realiza a atualização do To-Do do ID informado.
+        ///     Realiza a atualização do pedido do ID informado.
         /// </summary>
-        /// <param name="id">Código identificador do To-Do</param>
-        /// <param name="model">Objeto com os dados do To-Do</param>
+        /// <param name="id">Código identificador do pedido</param>
+        /// <param name="model">Objeto com os dados do pedido</param>
         /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public IActionResult Atualizar([FromRoute] string id, [FromBody] ToDo model)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] Pedido model)
         {
             try
             {
-                var receita = _todoService.Get(ObjectId.Parse(id));
+                var receita = _pedidoService.Get(ObjectId.Parse(id));
                 if (receita == null)
-                    throw new Exception($"To-Do com o ID {id} não foi encontrado.");
+                    throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                if (!_todoService.Update(ObjectId.Parse(id), model))
-                    throw new Exception("Não foi possível atualizar o To-Do.");
+                if (!_pedidoService.Update(ObjectId.Parse(id), model))
+                    throw new Exception("Não foi possível atualizar o pedido.");
 
                 return Ok(model);
             }
             catch (Exception e)
             {
-                _logger.LogError($"todo/atualizar/{id} - {e.InnerException}");
+                _logger.LogError($"pedido/atualizar/{id} - {e.InnerException}");
                 return BadRequest(e.InnerException);
             }
         }
 
         /// <summary>
-        ///     Realiza a remoção do To-Do através do ID informado.
+        ///     Realiza a remoção do pedido através do ID informado.
         /// </summary>
-        /// <param name="id">Código identificador do To-Do</param>
+        /// <param name="id">Código identificador do pedido</param>
         /// <returns>Objeto removido</returns>
         [HttpDelete("remover/{id}")]
         [Produces("application/json")]
@@ -143,18 +143,18 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var todo = _todoService.Get(ObjectId.Parse(id));
+                var todo = _pedidoService.Get(ObjectId.Parse(id));
                 if (todo == null)
-                    throw new Exception($"To-Do com o ID {id} não foi encontrado.");
+                    throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                if (!_todoService.Delete(ObjectId.Parse(id)))
-                    throw new Exception("Não foi possível remover o To-Do.");
+                if (!_pedidoService.Delete(ObjectId.Parse(id)))
+                    throw new Exception("Não foi possível remover o pedido.");
 
                 return Ok(todo);
             }
             catch (Exception e)
             {
-                _logger.LogError($"todo/remover/{id} - {e.InnerException}");
+                _logger.LogError($"pedido/remover/{id} - {e.InnerException}");
                 return BadRequest(e.InnerException);
             }
         }

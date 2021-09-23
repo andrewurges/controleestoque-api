@@ -1,4 +1,5 @@
 ﻿using ControleEstoque.Api.Interface;
+using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Model;
@@ -88,11 +89,20 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] Estoque model)
+        public IActionResult Criar([FromBody] EstoqueRequest model)
         {
             try
             {
-                if (!_estoqueService.Create(model))
+                var estoque = new Estoque()
+                {
+                    descricao = model.descricao,
+                    foto = model.foto,
+                    quantidade_disponivel = model.quantidade_disponivel,
+                    preco = model.preco,
+                    unidade_medida = model.unidade_medida
+                };
+
+                if (!_estoqueService.Create(estoque))
                     throw new Exception("Não foi possível incluir o estoque.");
 
                 return Ok(model);
@@ -112,7 +122,7 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public IActionResult Atualizar([FromRoute] string id, [FromBody] Estoque model)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] EstoqueRequest model)
         {
             try
             {
@@ -120,7 +130,13 @@ namespace ControleEstoque.Api.Controllers
                 if (estoque == null)
                     throw new Exception($"Estoque com o ID {id} não foi encontrado.");
 
-                if (!_estoqueService.Update(ObjectId.Parse(id), model))
+                estoque.descricao = model.descricao;
+                estoque.foto = model.foto;
+                estoque.quantidade_disponivel = model.quantidade_disponivel;
+                estoque.preco = model.preco;
+                estoque.unidade_medida = model.unidade_medida;
+
+                if (!_estoqueService.Update(ObjectId.Parse(id), estoque))
                     throw new Exception("Não foi possível atualizar o estoque.");
 
                 return Ok(model);

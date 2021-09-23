@@ -39,7 +39,7 @@ namespace ControleEstoque.Api
             services.AddSingleton<ProdutoService>();
             services.AddSingleton<ReceitaService>();
             services.AddSingleton<MovimentacaoService>();
-            services.AddSingleton<ToDoService>();
+            services.AddSingleton<PedidoService>();
 
             services.AddIdentityMongoDbProvider<ApplicationUser, ApplicationRole>(identityOptions =>
             {
