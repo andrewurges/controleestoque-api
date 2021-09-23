@@ -73,7 +73,11 @@ namespace ControleEstoque.Data.Repositories
             try
             {
                 Expression<Func<Produto, bool>> filter = x => x.id.Equals(id);
-                var update = new UpdateDefinitionBuilder<Produto>().Set(n => n, model);
+                var update = new UpdateDefinitionBuilder<Produto>()
+                    .Set(n => n.descricao, model.descricao)
+                    .Set(n => n.foto, model.foto)
+                    .Set(n => n.preco, model.preco)
+                    .Set(n => n.quantidade_disponivel, model.quantidade_disponivel);
 
                 if (connection.GetCollection().FindOneAndUpdate(filter, update) != null)
                 {

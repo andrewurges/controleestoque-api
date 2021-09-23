@@ -51,8 +51,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"movimentacao/listar - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"movimentacao/listar - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
 
@@ -74,8 +74,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"movimentacao/criar - {e.InnerException}");
-                return BadRequest(e.InnerException);
+                _logger.LogError($"movimentacao/criar - {e.Message}");
+                return BadRequest(e.Message);
             }
         }
     }

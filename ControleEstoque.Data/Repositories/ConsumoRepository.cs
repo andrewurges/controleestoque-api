@@ -73,7 +73,10 @@ namespace ControleEstoque.Data.Repositories
             try
             {
                 Expression<Func<Consumo, bool>> filter = x => x.id.Equals(id);
-                var update = new UpdateDefinitionBuilder<Consumo>().Set(n => n, model);
+                var update = new UpdateDefinitionBuilder<Consumo>()
+                    .Set(n => n.agua, model.agua)
+                    .Set(n => n.energia, model.energia)
+                    .Set(n => n.mao_de_obra, model.mao_de_obra);
 
                 if (connection.GetCollection().FindOneAndUpdate(filter, update) != null)
                 {

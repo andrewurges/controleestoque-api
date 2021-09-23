@@ -75,8 +75,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError("Usuario/autenticar - " + e.InnerException);
-                return BadRequest(e.InnerException);
+                _logger.LogError("Usuario/autenticar - " + e.Message);
+                return BadRequest(e.Message);
             }
         }
 
@@ -119,8 +119,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError("Usuario/registrar - " + e.InnerException);
-                return BadRequest(e.InnerException);
+                _logger.LogError("Usuario/registrar - " + e.Message);
+                return BadRequest(e.Message);
             }
         }
 
@@ -155,8 +155,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError("Usuario/atualizar - " + e.InnerException);
-                return BadRequest(e.InnerException);
+                _logger.LogError("Usuario/atualizar - " + e.Message);
+                return BadRequest(e.Message);
             }
         }
 
@@ -199,8 +199,8 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError("Usuario/trocar-senha - " + e.InnerException);
-                return BadRequest(e.InnerException);
+                _logger.LogError("Usuario/trocar-senha - " + e.Message);
+                return BadRequest(e.Message);
             }
         }
     }
