@@ -27,7 +27,7 @@ namespace ControleEstoque.Data.Repositories
             {
                 return connection.GetCollection().Find(x => x.id.Equals(id)).FirstOrDefault();
             }
-            catch (MongoConnectionException e)
+            catch (MongoConnectionException)
             {
                 return new Receita();
             }
@@ -46,7 +46,7 @@ namespace ControleEstoque.Data.Repositories
                     return connection.GetCollection().Find<Receita>(where).ToList();
                 }
             }
-            catch (MongoConnectionException e)
+            catch (MongoConnectionException)
             {
                 return new List<Receita>();
             }
@@ -60,7 +60,7 @@ namespace ControleEstoque.Data.Repositories
                 connection.GetCollection().InsertOne(model);
                 status = true;
             }
-            catch (MongoCommandException e)
+            catch (MongoCommandException)
             {
                 status = false;
             }
@@ -85,7 +85,7 @@ namespace ControleEstoque.Data.Repositories
             }
             catch (MongoCommandException e)
             {
-                throw e;
+                throw new Exception(e.Message);
             }
 
             return status;
@@ -105,7 +105,7 @@ namespace ControleEstoque.Data.Repositories
             }
             catch (MongoCommandException e)
             {
-                throw e;
+                throw new Exception(e.Message);
             }
 
             return status;
