@@ -96,7 +96,6 @@ namespace ControleEstoque.Api.Controllers
                 var estoque = new Estoque()
                 {
                     descricao = model.descricao,
-                    foto = model.foto,
                     quantidade_disponivel = model.quantidade_disponivel,
                     preco = model.preco,
                     unidade_medida = model.unidade_medida
@@ -131,7 +130,6 @@ namespace ControleEstoque.Api.Controllers
                     throw new Exception($"Estoque com o ID {id} não foi encontrado.");
 
                 estoque.descricao = model.descricao;
-                estoque.foto = model.foto;
                 estoque.preco = model.preco;
                 estoque.unidade_medida = model.unidade_medida;
                 estoque.quantidade_disponivel = model.quantidade_disponivel;

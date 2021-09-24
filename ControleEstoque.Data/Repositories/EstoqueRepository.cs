@@ -27,7 +27,7 @@ namespace ControleEstoque.Data.Repositories
             {
                 return connection.GetCollection().Find(x => x.id.Equals(id)).FirstOrDefault();
             }
-            catch (MongoConnectionException e)
+            catch (MongoConnectionException)
             {
                 return new Estoque();
             }
@@ -46,7 +46,7 @@ namespace ControleEstoque.Data.Repositories
                     return connection.GetCollection().Find<Estoque>(where).ToList();
                 }
             }
-            catch (MongoConnectionException e)
+            catch (MongoConnectionException)
             {
                 return new List<Estoque>();
             }
@@ -60,7 +60,7 @@ namespace ControleEstoque.Data.Repositories
                 connection.GetCollection().InsertOne(model);
                 status = true;
             }
-            catch (MongoCommandException e)
+            catch (MongoCommandException)
             {
                 status = false;
             }
@@ -75,7 +75,6 @@ namespace ControleEstoque.Data.Repositories
                 Expression<Func<Estoque, bool>> filter = x => x.id.Equals(id);
                 var update = new UpdateDefinitionBuilder<Estoque>()
                     .Set(n => n.descricao, model.descricao)
-                    .Set(n => n.foto, model.foto)
                     .Set(n => n.preco, model.preco)
                     .Set(n => n.unidade_medida, model.unidade_medida)
                     .Set(n => n.quantidade_disponivel, model.quantidade_disponivel);
@@ -87,7 +86,7 @@ namespace ControleEstoque.Data.Repositories
             }
             catch (MongoCommandException e)
             {
-                throw e;
+                throw new Exception(e.Message);
             }
 
             return status;
@@ -107,7 +106,7 @@ namespace ControleEstoque.Data.Repositories
             }
             catch (MongoCommandException e)
             {
-                throw e;
+                throw new Exception(e.Message);
             }
 
             return status;
