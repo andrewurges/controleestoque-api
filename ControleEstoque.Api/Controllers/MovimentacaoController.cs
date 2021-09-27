@@ -67,10 +67,7 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                if (!_movimentacaoService.Create(model))
-                    throw new Exception("Não foi possível incluir a movimentação.");
-
-                return Ok(model);
+                return Ok((MovimentacaoDTO)_movimentacaoService.Create(model));
             }
             catch (Exception e)
             {

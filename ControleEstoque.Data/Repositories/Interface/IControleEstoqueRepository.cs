@@ -9,8 +9,8 @@ namespace ControleEstoque.Data.Repositories.Interface
     {
         T Get(ObjectId id);
         List<T> GetAll(Expression<Func<T, bool>> where = null);
-        bool Create(T model);
-        bool Update(ObjectId id, T model);
-        bool Delete(ObjectId id);
+        T Create(T model);
+        T Update(ObjectId id, T model);
+        T Delete(ObjectId id);
     }
 }

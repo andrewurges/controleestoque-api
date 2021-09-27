@@ -92,10 +92,7 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                if (!_receitaService.Create(model))
-                    throw new Exception("Não foi possível incluir a receita.");
-
-                return Ok(model);
+                return Ok((ReceitaDTO)_receitaService.Create(model));
             }
             catch (Exception e)
             {
@@ -116,14 +113,10 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var receita = _receitaService.Get(ObjectId.Parse(id));
-                if (receita == null)
+                if (_receitaService.Get(ObjectId.Parse(id)) == null)
                     throw new Exception($"Receita com o ID {id} não foi encontrado.");
 
-                if (!_receitaService.Update(ObjectId.Parse(id), model))
-                    throw new Exception("Não foi possível atualizar a receita.");
-
-                return Ok(model);
+                return Ok((ReceitaDTO)_receitaService.Update(ObjectId.Parse(id), model));
             }
             catch (Exception e)
             {
@@ -143,14 +136,10 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var receita = _receitaService.Get(ObjectId.Parse(id));
-                if (receita == null)
+                if (_receitaService.Get(ObjectId.Parse(id)) == null)
                     throw new Exception($"Receita com o ID {id} não foi encontrado.");
 
-                if (!_receitaService.Delete(ObjectId.Parse(id)))
-                    throw new Exception("Não foi possível remover a receita.");
-
-                return Ok(receita);
+                return Ok((ReceitaDTO)_receitaService.Delete(ObjectId.Parse(id)));
             }
             catch (Exception e)
             {

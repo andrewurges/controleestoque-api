@@ -29,17 +29,17 @@ namespace ControleEstoque.Api.Services
             return _movimentacaoRepository.GetAll(where);
         }
 
-        public bool Create(Movimentacao model)
+        public Movimentacao Create(Movimentacao model)
         {
             return _movimentacaoRepository.Create(model);
         }
 
-        public bool Update(ObjectId id, Movimentacao model)
+        public Movimentacao Update(ObjectId id, Movimentacao model)
         {
             return _movimentacaoRepository.Update(id, model);
         }
 
-        public bool Delete(ObjectId id)
+        public Movimentacao Delete(ObjectId id)
         {
             return _movimentacaoRepository.Delete(id);
         }

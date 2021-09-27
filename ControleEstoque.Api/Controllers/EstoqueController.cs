@@ -101,10 +101,7 @@ namespace ControleEstoque.Api.Controllers
                     unidade_medida = model.unidade_medida
                 };
 
-                if (!_estoqueService.Create(estoque))
-                    throw new Exception("Não foi possível incluir o estoque.");
-
-                return Ok(model);
+                return Ok((EstoqueDTO)_estoqueService.Create(estoque));
             }
             catch (Exception e)
             {
@@ -134,10 +131,7 @@ namespace ControleEstoque.Api.Controllers
                 estoque.unidade_medida = model.unidade_medida;
                 estoque.quantidade_disponivel = model.quantidade_disponivel;
 
-                if (!_estoqueService.Update(ObjectId.Parse(id), estoque))
-                    throw new Exception("Não foi possível atualizar o estoque.");
-
-                return Ok(model);
+                return Ok((EstoqueDTO)_estoqueService.Update(ObjectId.Parse(id), estoque));
             }
             catch (Exception e)
             {
@@ -157,14 +151,10 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var estoque = _estoqueService.Get(ObjectId.Parse(id));
-                if (estoque == null)
+                if (_estoqueService.Get(ObjectId.Parse(id)) == null)
                     throw new Exception($"Estoque com o ID {id} não foi encontrado.");
 
-                if (!_estoqueService.Delete(ObjectId.Parse(id)))
-                    throw new Exception("Não foi possível remover o estoque.");
-
-                return Ok(estoque);
+                return Ok((EstoqueDTO)_estoqueService.Delete(ObjectId.Parse(id)));
             }
             catch (Exception e)
             {

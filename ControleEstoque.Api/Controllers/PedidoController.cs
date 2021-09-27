@@ -68,11 +68,11 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var todo = _pedidoService.Get(ObjectId.Parse(id));
-                if (todo == null)
+                var pedido = _pedidoService.Get(ObjectId.Parse(id));
+                if (pedido == null)
                     throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                return Ok((PedidoDTO)todo);
+                return Ok((PedidoDTO)pedido);
             }
             catch (Exception e)
             {
@@ -92,10 +92,7 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                if (!_pedidoService.Create(model))
-                    throw new Exception("Não foi possível incluir o pedido.");
-
-                return Ok(model);
+                return Ok((PedidoDTO)_pedidoService.Create(model));
             }
             catch (Exception e)
             {
@@ -116,14 +113,10 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var receita = _pedidoService.Get(ObjectId.Parse(id));
-                if (receita == null)
+                if (_pedidoService.Get(ObjectId.Parse(id)) == null)
                     throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                if (!_pedidoService.Update(ObjectId.Parse(id), model))
-                    throw new Exception("Não foi possível atualizar o pedido.");
-
-                return Ok(model);
+                return Ok((PedidoDTO)_pedidoService.Update(ObjectId.Parse(id), model));
             }
             catch (Exception e)
             {
@@ -143,14 +136,10 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var todo = _pedidoService.Get(ObjectId.Parse(id));
-                if (todo == null)
+                if (_pedidoService.Get(ObjectId.Parse(id)) == null)
                     throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                if (!_pedidoService.Delete(ObjectId.Parse(id)))
-                    throw new Exception("Não foi possível remover o pedido.");
-
-                return Ok(todo);
+                return Ok((PedidoDTO)_pedidoService.Delete(ObjectId.Parse(id)));
             }
             catch (Exception e)
             {
