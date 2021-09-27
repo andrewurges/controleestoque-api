@@ -29,17 +29,17 @@ namespace ControleEstoque.Api.Services
             return _consumoRepository.GetAll(where);
         }
 
-        public bool Create(Consumo model)
+        public Consumo Create(Consumo model)
         {
             return _consumoRepository.Create(model);
         }
 
-        public bool Update(ObjectId id, Consumo model)
+        public Consumo Update(ObjectId id, Consumo model)
         {
             return _consumoRepository.Update(id, model);
         }
 
-        public bool Delete(ObjectId id)
+        public Consumo Delete(ObjectId id)
         {
             return _consumoRepository.Delete(id);
         }

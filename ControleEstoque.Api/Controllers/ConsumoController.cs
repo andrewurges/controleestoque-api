@@ -92,10 +92,7 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                if (!_consumoService.Create(model))
-                    throw new Exception("Não foi possível incluir o consumo.");
-
-                return Ok(model);
+                return Ok((ConsumoDTO)_consumoService.Create(model));
             }
             catch (Exception e)
             {
@@ -116,14 +113,10 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var consumo = _consumoService.Get(ObjectId.Parse(id));
-                if (consumo == null)
+                if (_consumoService.Get(ObjectId.Parse(id)) == null)
                     throw new Exception($"Consumo com o ID {id} não foi encontrado.");
 
-                if (!_consumoService.Update(ObjectId.Parse(id), model))
-                    throw new Exception("Não foi possível atualizar o consumo.");
-
-                return Ok(model);
+                return Ok((ConsumoDTO)_consumoService.Update(ObjectId.Parse(id), model));
             }
             catch (Exception e)
             {
@@ -143,14 +136,10 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var consumo = _consumoService.Get(ObjectId.Parse(id));
-                if (consumo == null)
+                if (_consumoService.Get(ObjectId.Parse(id)) == null)
                     throw new Exception($"Consumo com o ID {id} não foi encontrado.");
 
-                if (!_consumoService.Delete(ObjectId.Parse(id)))
-                    throw new Exception("Não foi possível remover o consumo.");
-
-                return Ok(consumo);
+                return Ok((ConsumoDTO)_consumoService.Delete(ObjectId.Parse(id)));
             }
             catch (Exception e)
             {

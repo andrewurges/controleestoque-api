@@ -29,17 +29,17 @@ namespace ControleEstoque.Api.Services
             return _produtoRepository.GetAll(where);
         }
 
-        public bool Create(Produto model)
+        public Produto Create(Produto model)
         {
             return _produtoRepository.Create(model);
         }
 
-        public bool Update(ObjectId id, Produto model)
+        public Produto Update(ObjectId id, Produto model)
         {
             return _produtoRepository.Update(id, model);
         }
 
-        public bool Delete(ObjectId id)
+        public Produto Delete(ObjectId id)
         {
             return _produtoRepository.Delete(id);
         }

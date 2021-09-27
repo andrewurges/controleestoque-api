@@ -92,10 +92,7 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                if (!_produtoService.Create(model))
-                    throw new Exception("Não foi possível incluir o produto.");
-
-                return Ok(model);
+                return Ok((ProdutoDTO)_produtoService.Create(model));
             }
             catch (Exception e)
             {
@@ -116,14 +113,10 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var produto = _produtoService.Get(ObjectId.Parse(id));
-                if (produto == null)
+                if (_produtoService.Get(ObjectId.Parse(id)) == null)
                     throw new Exception($"Produto com o ID {id} não foi encontrado.");
 
-                if (!_produtoService.Update(ObjectId.Parse(id), model))
-                    throw new Exception("Não foi possível atualizar o produto.");
-
-                return Ok(model);
+                return Ok((ProdutoDTO)_produtoService.Update(ObjectId.Parse(id), model));
             }
             catch (Exception e)
             {
@@ -143,14 +136,10 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var produto = _produtoService.Get(ObjectId.Parse(id));
-                if (produto == null)
+                if (_produtoService.Get(ObjectId.Parse(id)) == null)
                     throw new Exception($"Produto com o ID {id} não foi encontrado.");
 
-                if (!_produtoService.Delete(ObjectId.Parse(id)))
-                    throw new Exception("Não foi possível remover o produto.");
-
-                return Ok(produto);
+                return Ok((ProdutoDTO)_produtoService.Delete(ObjectId.Parse(id)));
             }
             catch (Exception e)
             {

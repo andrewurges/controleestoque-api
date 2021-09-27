@@ -52,24 +52,23 @@ namespace ControleEstoque.Data.Repositories
             }
         }
 
-        public bool Create(Movimentacao model)
+        public Movimentacao Create(Movimentacao model)
         {
-            var status = false;
             try
             {
-                connection.GetCollection().InsertOne(model);
-                status = true;
+                var collection = connection.GetCollection();
+                collection.InsertOne(model);
+
+                return GetAll().Last();
             }
-            catch (MongoCommandException)
+            catch (MongoCommandException e)
             {
-                status = false;
+                throw new Exception(e.Message);
             }
-            return status;
         }
 
-        public bool Update(ObjectId id, Movimentacao model)
+        public Movimentacao Update(ObjectId id, Movimentacao model)
         {
-            var status = false;
             try
             {
                 Expression<Func<Movimentacao, bool>> filter = x => x.id.Equals(id);
@@ -77,37 +76,26 @@ namespace ControleEstoque.Data.Repositories
                     .Set(n => n.tipo, model.tipo)
                     .Set(n => n.itens, model.itens);
 
-                if (connection.GetCollection().FindOneAndUpdate(filter, update) != null)
-                {
-                    status = true;
-                }
+                return connection.GetCollection().FindOneAndUpdate(filter, update);
             }
             catch (MongoCommandException e)
             {
                 throw new Exception(e.Message);
             }
-
-            return status;
         }
 
-        public bool Delete(ObjectId id)
+        public Movimentacao Delete(ObjectId id)
         {
-            var status = false;
             try
             {
                 Expression<Func<Movimentacao, bool>> filter = x => x.id.Equals(id);
 
-                if (connection.GetCollection().FindOneAndDelete(filter) != null)
-                {
-                    status = true;
-                }
+                return connection.GetCollection().FindOneAndDelete(filter);
             }
             catch (MongoCommandException e)
             {
                 throw new Exception(e.Message);
             }
-
-            return status;
         }
     }
 }
