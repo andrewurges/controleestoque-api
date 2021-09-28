@@ -77,7 +77,10 @@ namespace ControleEstoque.Data.Repositories
                     .Set(n => n.ingredientes, model.ingredientes)
                     .Set(n => n.modo_preparo, model.modo_preparo);
 
-                return connection.GetCollection().FindOneAndUpdate(filter, update);
+                var collection = connection.GetCollection();
+                collection.FindOneAndUpdate(filter, update);
+
+                return collection.Find(filter).FirstOrDefault();
             }
             catch (MongoCommandException e)
             {
