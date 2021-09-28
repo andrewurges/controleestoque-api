@@ -20,6 +20,9 @@ namespace ControleEstoque.Data.Model
         [BsonElement("tipo")]
         public ETipoMovimentacao Tipo { get; set; }
 
+        [BsonElement("data")]
+        public string Data { get; set; }
+
         [BsonElement("itens")]
         public List<ItemMovimentacao> Itens { get; set; }
 
@@ -29,6 +32,7 @@ namespace ControleEstoque.Data.Model
             {
                 Id = model.Id.ToString(),
                 Tipo = model.Tipo,
+                Data = model.Data,
                 Itens = model.Itens.Select<ItemMovimentacao, ItemMovimentacaoDTO>(x => x).ToList()
             };
         }

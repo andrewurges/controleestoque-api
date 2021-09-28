@@ -68,21 +68,12 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var movimentacao = new Movimentacao();
-                movimentacao.Tipo = model.Tipo;
-
-                model.Itens.ForEach(x =>
-                {
-                    movimentacao.Itens.Add(new ItemMovimentacao() 
-                    { 
-                        IdEstoque = x.IdEstoque,
-                        IdProduto = x.IdProduto,
-                        Quantidade = x.Quantidade,
-                        Valor = x.Valor
-                    });
-                });
-
-                return Ok((MovimentacaoDTO)_movimentacaoService.Create(movimentacao));
+                return Ok((MovimentacaoDTO)_movimentacaoService.Create(new Movimentacao() 
+                { 
+                    Tipo = model.Tipo,
+                    Data = model.Data,
+                    Itens = model.Itens
+                }));
             }
             catch (Exception e)
             {

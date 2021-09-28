@@ -93,20 +93,12 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var receita = new Receita();
-                receita.IdProduto = model.IdProduto;
-                receita.ModoPreparo = model.ModoPreparo;
-
-                model.Ingredientes.ForEach(x =>
-                {
-                    receita.Ingredientes.Add(new Ingrediente()
-                    {
-                        IdEstoque = x.IdEstoque,
-                        Quantidade = x.Quantidade
-                    });
-                });
-
-                return Ok((ReceitaDTO)_receitaService.Create(receita));
+                return Ok((ReceitaDTO)_receitaService.Create(new Receita() 
+                { 
+                    IdProduto = model.IdProduto,
+                    ModoPreparo = model.ModoPreparo,
+                    Ingredientes = model.Ingredientes
+                }));
             }
             catch (Exception e)
             {
@@ -133,17 +125,7 @@ namespace ControleEstoque.Api.Controllers
 
                 receita.IdProduto = model.IdProduto;
                 receita.ModoPreparo = model.ModoPreparo;
-
-                receita.Ingredientes.Clear();
-
-                model.Ingredientes.ForEach(x =>
-                {
-                    receita.Ingredientes.Add(new Ingrediente()
-                    {
-                        IdEstoque = x.IdEstoque,
-                        Quantidade = x.Quantidade
-                    });
-                });
+                receita.Ingredientes = model.Ingredientes;
 
                 return Ok((ReceitaDTO)_receitaService.Update(ObjectId.Parse(id), receita));
             }

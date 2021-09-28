@@ -4,6 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ControleEstoque.Data.Model
 {
@@ -11,7 +12,7 @@ namespace ControleEstoque.Data.Model
     {
         public Pedido()
         {
-            ListaProduto = new List<string>();
+            ListaProduto = new List<ItemPedido>();
         }
 
         [BsonId()]
@@ -21,10 +22,10 @@ namespace ControleEstoque.Data.Model
         public string NomeCliente { get; set; }
 
         [BsonElement("lista_produto")]
-        public List<string> ListaProduto { get; set; }
+        public List<ItemPedido> ListaProduto { get; set; }
 
         [BsonElement("data")]
-        public DateTime Data { get; set; }
+        public string Data { get; set; }
 
         [BsonElement("situacao_pedido")]
         public ESituacaoPedido SituacaoPedido { get; set; }
@@ -38,7 +39,7 @@ namespace ControleEstoque.Data.Model
             {
                 Id = model.Id.ToString(),
                 NomeCliente = model.NomeCliente,
-                ListaProduto = model.ListaProduto,
+                ListaProduto = model.ListaProduto.Select<ItemPedido, ItemPedidoDTO>(x => x).ToList(),
                 Data = model.Data,
                 SituacaoPedido = model.SituacaoPedido,
                 SituacaoPagamento = model.SituacaoPagamento

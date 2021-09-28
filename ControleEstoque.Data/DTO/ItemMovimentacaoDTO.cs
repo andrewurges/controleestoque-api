@@ -4,9 +4,6 @@ namespace ControleEstoque.Data.DTO
 {
     public class ItemMovimentacaoDTO
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
         [JsonProperty("idEstoque")]
         public string IdEstoque { get; set; }
 
