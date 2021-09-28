@@ -7,25 +7,25 @@ namespace ControleEstoque.Data.Model
     public class Consumo
     {
         [BsonId()]
-        public ObjectId id { get; set; }
+        public ObjectId Id { get; set; }
 
         [BsonElement("agua")]
-        public double agua { get; set; }
+        public double Agua { get; set; }
 
         [BsonElement("energia")]
-        public double energia { get; set; }
+        public double Energia { get; set; }
 
         [BsonElement("mao_de_obra")]
-        public double mao_de_obra { get; set; }
+        public double MaoDeObra { get; set; }
 
         public static implicit operator ConsumoDTO(Consumo model)
         {
             return new ConsumoDTO()
             {
-                id = model.id.ToString(),
-                agua = model.agua,
-                energia = model.energia,
-                mao_de_obra = model.mao_de_obra
+                Id = model.Id.ToString(),
+                Agua = model.Agua,
+                Energia = model.Energia,
+                MaoDeObra = model.MaoDeObra
             };
         }
     }

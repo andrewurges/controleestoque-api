@@ -3,13 +3,10 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace ControleEstoque.Data.DTO
+namespace ControleEstoque.Api.Model
 {
-    public class PedidoDTO
+    public class PedidoRequest
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
         [JsonProperty("nomeCliente")]
         public string NomeCliente { get; set; }
 

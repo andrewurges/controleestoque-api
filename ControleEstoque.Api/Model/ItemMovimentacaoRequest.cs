@@ -1,12 +1,9 @@
 ﻿using Newtonsoft.Json;
 
-namespace ControleEstoque.Data.DTO
+namespace ControleEstoque.Api.Model
 {
-    public class ItemMovimentacaoDTO
+    public class ItemMovimentacaoRequest
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
         [JsonProperty("idEstoque")]
         public string IdEstoque { get; set; }
 

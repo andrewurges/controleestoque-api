@@ -25,7 +25,7 @@ namespace ControleEstoque.Data.Repositories
         {
             try
             {
-                return connection.GetCollection().Find(x => x.id.Equals(id)).FirstOrDefault();
+                return connection.GetCollection().Find(x => x.Id.Equals(id)).FirstOrDefault();
             }
             catch (MongoConnectionException)
             {
@@ -71,10 +71,10 @@ namespace ControleEstoque.Data.Repositories
         {
             try
             {
-                Expression<Func<Movimentacao, bool>> filter = x => x.id.Equals(id);
+                Expression<Func<Movimentacao, bool>> filter = x => x.Id.Equals(id);
                 var update = new UpdateDefinitionBuilder<Movimentacao>()
-                    .Set(n => n.tipo, model.tipo)
-                    .Set(n => n.itens, model.itens);
+                    .Set(n => n.Tipo, model.Tipo)
+                    .Set(n => n.Itens, model.Itens);
 
                 var collection = connection.GetCollection();
                 collection.FindOneAndUpdate(filter, update);
@@ -91,7 +91,7 @@ namespace ControleEstoque.Data.Repositories
         {
             try
             {
-                Expression<Func<Movimentacao, bool>> filter = x => x.id.Equals(id);
+                Expression<Func<Movimentacao, bool>> filter = x => x.Id.Equals(id);
 
                 return connection.GetCollection().FindOneAndDelete(filter);
             }

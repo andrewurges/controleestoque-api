@@ -1,4 +1,5 @@
 ﻿using ControleEstoque.Api.Interface;
+using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Model;
@@ -88,11 +89,16 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] Consumo model)
+        public IActionResult Criar([FromBody] ConsumoRequest model)
         {
             try
             {
-                return Ok((ConsumoDTO)_consumoService.Create(model));
+                return Ok((ConsumoDTO)_consumoService.Create(new Consumo()
+                {
+                    Agua = model.Agua,
+                    Energia = model.Energia,
+                    MaoDeObra = model.MaoDeObra
+                }));
             }
             catch (Exception e)
             {
@@ -109,14 +115,19 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public IActionResult Atualizar([FromRoute] string id, [FromBody] Consumo model)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] ConsumoRequest model)
         {
             try
             {
-                if (_consumoService.Get(ObjectId.Parse(id)) == null)
+                var consumo = _consumoService.Get(ObjectId.Parse(id));
+                if (consumo == null)
                     throw new Exception($"Consumo com o ID {id} não foi encontrado.");
 
-                return Ok((ConsumoDTO)_consumoService.Update(ObjectId.Parse(id), model));
+                consumo.Agua = model.Agua;
+                consumo.Energia = model.Energia;
+                consumo.MaoDeObra = model.MaoDeObra;
+
+                return Ok((ConsumoDTO)_consumoService.Update(ObjectId.Parse(id), consumo));
             }
             catch (Exception e)
             {

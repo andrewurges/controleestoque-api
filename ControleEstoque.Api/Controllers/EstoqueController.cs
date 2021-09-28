@@ -93,15 +93,13 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var estoque = new Estoque()
+                return Ok((EstoqueDTO)_estoqueService.Create(new Estoque()
                 {
-                    descricao = model.descricao,
-                    quantidade_disponivel = model.quantidade_disponivel,
-                    preco = model.preco,
-                    unidade_medida = model.unidade_medida
-                };
-
-                return Ok((EstoqueDTO)_estoqueService.Create(estoque));
+                    Descricao = model.Descricao,
+                    QuantidadeDisponivel = model.QuantidadeDisponivel,
+                    Preco = model.Preco,
+                    UnidadeMedida = model.UnidadeMedida
+                }));
             }
             catch (Exception e)
             {
@@ -126,10 +124,10 @@ namespace ControleEstoque.Api.Controllers
                 if (estoque == null)
                     throw new Exception($"Estoque com o ID {id} não foi encontrado.");
 
-                estoque.descricao = model.descricao;
-                estoque.preco = model.preco;
-                estoque.unidade_medida = model.unidade_medida;
-                estoque.quantidade_disponivel = model.quantidade_disponivel;
+                estoque.Descricao = model.Descricao;
+                estoque.Preco = model.Preco;
+                estoque.UnidadeMedida = model.UnidadeMedida;
+                estoque.QuantidadeDisponivel = model.QuantidadeDisponivel;
 
                 return Ok((EstoqueDTO)_estoqueService.Update(ObjectId.Parse(id), estoque));
             }
@@ -144,7 +142,7 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a remoção do estoque através do ID informado.
         /// </summary>
         /// <param name="id">Código identificador do estoque</param>
-        /// /// <returns>Objeto removido</returns>
+        /// <returns>Objeto removido</returns>
         [HttpDelete("remover/{id}")]
         [Produces("application/json")]
         public IActionResult Remover([FromRoute] string id)

@@ -1,12 +1,9 @@
 ﻿using Newtonsoft.Json;
 
-namespace ControleEstoque.Data.DTO
+namespace ControleEstoque.Api.Model
 {
-    public class ConsumoDTO
+    public class ConsumoRequest
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
         [JsonProperty("agua")]
         public double Agua { get; set; }
 

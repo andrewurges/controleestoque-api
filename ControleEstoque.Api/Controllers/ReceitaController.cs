@@ -1,4 +1,5 @@
 ﻿using ControleEstoque.Api.Interface;
+using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Model;
@@ -88,11 +89,24 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] Receita model)
+        public IActionResult Criar([FromBody] ReceitaRequest model)
         {
             try
             {
-                return Ok((ReceitaDTO)_receitaService.Create(model));
+                var receita = new Receita();
+                receita.IdProduto = model.IdProduto;
+                receita.ModoPreparo = model.ModoPreparo;
+
+                model.Ingredientes.ForEach(x =>
+                {
+                    receita.Ingredientes.Add(new Ingrediente()
+                    {
+                        IdEstoque = x.IdEstoque,
+                        Quantidade = x.Quantidade
+                    });
+                });
+
+                return Ok((ReceitaDTO)_receitaService.Create(receita));
             }
             catch (Exception e)
             {
@@ -109,14 +123,29 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public IActionResult Atualizar([FromRoute] string id, [FromBody] Receita model)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] ReceitaRequest model)
         {
             try
             {
-                if (_receitaService.Get(ObjectId.Parse(id)) == null)
+                var receita = _receitaService.Get(ObjectId.Parse(id));
+                if (receita == null)
                     throw new Exception($"Receita com o ID {id} não foi encontrado.");
 
-                return Ok((ReceitaDTO)_receitaService.Update(ObjectId.Parse(id), model));
+                receita.IdProduto = model.IdProduto;
+                receita.ModoPreparo = model.ModoPreparo;
+
+                receita.Ingredientes.Clear();
+
+                model.Ingredientes.ForEach(x =>
+                {
+                    receita.Ingredientes.Add(new Ingrediente()
+                    {
+                        IdEstoque = x.IdEstoque,
+                        Quantidade = x.Quantidade
+                    });
+                });
+
+                return Ok((ReceitaDTO)_receitaService.Update(ObjectId.Parse(id), receita));
             }
             catch (Exception e)
             {

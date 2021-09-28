@@ -1,4 +1,5 @@
 ﻿using ControleEstoque.Api.Interface;
+using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Model;
@@ -63,11 +64,25 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] Movimentacao model)
+        public IActionResult Criar([FromBody] MovimentacaoRequest model)
         {
             try
             {
-                return Ok((MovimentacaoDTO)_movimentacaoService.Create(model));
+                var movimentacao = new Movimentacao();
+                movimentacao.Tipo = model.Tipo;
+
+                model.Itens.ForEach(x =>
+                {
+                    movimentacao.Itens.Add(new ItemMovimentacao() 
+                    { 
+                        IdEstoque = x.IdEstoque,
+                        IdProduto = x.IdProduto,
+                        Quantidade = x.Quantidade,
+                        Valor = x.Valor
+                    });
+                });
+
+                return Ok((MovimentacaoDTO)_movimentacaoService.Create(movimentacao));
             }
             catch (Exception e)
             {

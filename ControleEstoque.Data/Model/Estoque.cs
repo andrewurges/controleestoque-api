@@ -8,29 +8,29 @@ namespace ControleEstoque.Data.Model
     public class Estoque
     {
         [BsonId()]
-        public ObjectId id { get; set; }
+        public ObjectId Id { get; set; }
 
         [BsonElement("descricao")]
-        public string descricao { get; set; }
+        public string Descricao { get; set; }
 
         [BsonElement("preco")]
-        public double preco { get; set; }
+        public double Preco { get; set; }
 
         [BsonElement("unidade_medida")]
-        public EUnidadeMedida unidade_medida { get; set; }
+        public EUnidadeMedida UnidadeMedida { get; set; }
 
         [BsonElement("quantidade_disponivel")]
-        public int quantidade_disponivel { get; set; }
+        public int QuantidadeDisponivel { get; set; }
 
         public static implicit operator EstoqueDTO(Estoque model)
         {
             return new EstoqueDTO()
             {
-                id = model.id.ToString(),
-                descricao = model.descricao,
-                preco = model.preco,
-                unidade_medida = model.unidade_medida,
-                quantidade_disponivel = model.quantidade_disponivel
+                Id = model.Id.ToString(),
+                Descricao = model.Descricao,
+                Preco = model.Preco,
+                UnidadeMedida = model.UnidadeMedida,
+                QuantidadeDisponivel = model.QuantidadeDisponivel
             };
         }
     }

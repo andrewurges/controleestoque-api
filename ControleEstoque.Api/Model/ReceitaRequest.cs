@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using ControleEstoque.Data.DTO;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace ControleEstoque.Data.DTO
+namespace ControleEstoque.Api.Model
 {
-    public class ReceitaDTO
+    public class ReceitaRequest
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
         [JsonProperty("idProduto")]
         public string IdProduto { get; set; }
 
         [JsonProperty("ingredientes")]
-        public List<IngredienteDTO> Ingredientes { get; set; }
+        public List<IngredienteRequest> Ingredientes { get; set; }
 
         [JsonProperty("modoPreparo")]
         public string ModoPreparo { get; set; }

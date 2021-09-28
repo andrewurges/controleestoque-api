@@ -11,37 +11,37 @@ namespace ControleEstoque.Data.Model
     {
         public Pedido()
         {
-            lista_produto = new List<string>();
+            ListaProduto = new List<string>();
         }
 
         [BsonId()]
-        public ObjectId id { get; set; }
+        public ObjectId Id { get; set; }
 
         [BsonElement("nome_cliente")]
-        public string nome_cliente { get; set; }
+        public string NomeCliente { get; set; }
 
         [BsonElement("lista_produto")]
-        public List<string> lista_produto { get; set; }
+        public List<string> ListaProduto { get; set; }
 
         [BsonElement("data")]
-        public DateTime data { get; set; }
+        public DateTime Data { get; set; }
 
         [BsonElement("situacao_pedido")]
-        public ESituacaoPedido situacao_pedido { get; set; }
+        public ESituacaoPedido SituacaoPedido { get; set; }
 
         [BsonElement("situacao_pagamento")]
-        public ESituacaoPagamento situacao_pagamento { get; set; }
+        public ESituacaoPagamento SituacaoPagamento { get; set; }
 
         public static implicit operator PedidoDTO(Pedido model)
         {
             return new PedidoDTO()
             {
-                id = model.id.ToString(),
-                nome_cliente = model.nome_cliente,
-                lista_produto = model.lista_produto,
-                data = model.data,
-                situacao_pedido = model.situacao_pedido,
-                situacao_pagamento = model.situacao_pagamento
+                Id = model.Id.ToString(),
+                NomeCliente = model.NomeCliente,
+                ListaProduto = model.ListaProduto,
+                Data = model.Data,
+                SituacaoPedido = model.SituacaoPedido,
+                SituacaoPagamento = model.SituacaoPagamento
             };
         }
     }
