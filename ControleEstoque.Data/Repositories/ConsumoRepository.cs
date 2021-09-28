@@ -77,8 +77,10 @@ namespace ControleEstoque.Data.Repositories
                     .Set(n => n.energia, model.energia)
                     .Set(n => n.mao_de_obra, model.mao_de_obra);
 
+                var collection = connection.GetCollection();
+                collection.FindOneAndUpdate(filter, update);
 
-                return connection.GetCollection().FindOneAndUpdate(filter, update);
+                return collection.Find(filter).FirstOrDefault();
             }
             catch (MongoCommandException e)
             {

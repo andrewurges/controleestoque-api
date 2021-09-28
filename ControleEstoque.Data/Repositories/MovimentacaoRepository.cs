@@ -76,7 +76,10 @@ namespace ControleEstoque.Data.Repositories
                     .Set(n => n.tipo, model.tipo)
                     .Set(n => n.itens, model.itens);
 
-                return connection.GetCollection().FindOneAndUpdate(filter, update);
+                var collection = connection.GetCollection();
+                collection.FindOneAndUpdate(filter, update);
+
+                return collection.Find(filter).FirstOrDefault();
             }
             catch (MongoCommandException e)
             {

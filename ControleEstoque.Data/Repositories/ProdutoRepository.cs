@@ -77,7 +77,10 @@ namespace ControleEstoque.Data.Repositories
                     .Set(n => n.preco, model.preco)
                     .Set(n => n.quantidade_disponivel, model.quantidade_disponivel);
 
-                return connection.GetCollection().FindOneAndUpdate(filter, update);
+                var collection = connection.GetCollection();
+                collection.FindOneAndUpdate(filter, update);
+
+                return collection.Find(filter).FirstOrDefault();
             }
             catch (MongoCommandException e)
             {
