@@ -1,4 +1,5 @@
 ﻿using ControleEstoque.Api.Interface;
+using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Model;
@@ -88,11 +89,16 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] Produto model)
+        public IActionResult Criar([FromBody] ProdutoRequest model)
         {
             try
             {
-                return Ok((ProdutoDTO)_produtoService.Create(model));
+                return Ok((ProdutoDTO)_produtoService.Create(new Produto() 
+                { 
+                    Descricao = model.Descricao,
+                    Preco = model.Preco,
+                    QuantidadeDisponivel = model.QuantidadeDisponivel
+                }));
             }
             catch (Exception e)
             {
@@ -109,14 +115,19 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public IActionResult Atualizar([FromRoute] string id, [FromBody] Produto model)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] ProdutoRequest model)
         {
             try
             {
-                if (_produtoService.Get(ObjectId.Parse(id)) == null)
+                var produto = _produtoService.Get(ObjectId.Parse(id));
+                if (produto == null)
                     throw new Exception($"Produto com o ID {id} não foi encontrado.");
 
-                return Ok((ProdutoDTO)_produtoService.Update(ObjectId.Parse(id), model));
+                produto.Descricao = model.Descricao;
+                produto.Preco = model.Preco;
+                produto.QuantidadeDisponivel = model.QuantidadeDisponivel;
+
+                return Ok((ProdutoDTO)_produtoService.Update(ObjectId.Parse(id), produto));
             }
             catch (Exception e)
             {

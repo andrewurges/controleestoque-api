@@ -10,29 +10,29 @@ namespace ControleEstoque.Data.Model
     {
         public Receita()
         {
-            ingredientes = new List<Ingrediente>();
+            Ingredientes = new List<Ingrediente>();
         }
 
         [BsonId()]
-        public ObjectId id { get; set; }
+        public ObjectId Id { get; set; }
 
         [BsonElement("id_produto")]
-        public string id_produto { get; set; }
+        public string IdProduto { get; set; }
 
         [BsonElement("ingredientes")]
-        public List<Ingrediente> ingredientes { get; set; }
+        public List<Ingrediente> Ingredientes { get; set; }
 
         [BsonElement("modo_preparo")]
-        public string modo_preparo { get; set; }
+        public string ModoPreparo { get; set; }
 
         public static implicit operator ReceitaDTO(Receita model)
         {
             return new ReceitaDTO()
             {
-                id = model.id.ToString(),
-                id_produto = model.id_produto,
-                ingredientes = model.ingredientes.Select<Ingrediente, IngredienteDTO>(x => x).ToList(),
-                modo_preparo = model.modo_preparo
+                Id = model.Id.ToString(),
+                IdProduto = model.IdProduto,
+                Ingredientes = model.Ingredientes.Select<Ingrediente, IngredienteDTO>(x => x).ToList(),
+                ModoPreparo = model.ModoPreparo
             };
         }
     }

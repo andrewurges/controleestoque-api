@@ -2,17 +2,14 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace ControleEstoque.Data.DTO
+namespace ControleEstoque.Api.Model
 {
-    public class MovimentacaoDTO
+    public class MovimentacaoRequest
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
         [JsonProperty("tipo")]
         public ETipoMovimentacao Tipo { get; set; }
 
         [JsonProperty("itens")]
-        public List<ItemMovimentacaoDTO> Itens { get; set; }
+        public List<ItemMovimentacaoRequest> Itens { get; set; }
     }
 }

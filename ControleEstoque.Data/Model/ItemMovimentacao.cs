@@ -7,29 +7,29 @@ namespace ControleEstoque.Data.Model
     public class ItemMovimentacao
     {
         [BsonId()]
-        public ObjectId id { get; set; }
+        public ObjectId Id { get; set; }
 
         [BsonElement("id_estoque")]
-        public string id_estoque { get; set; }
+        public string IdEstoque { get; set; }
 
         [BsonElement("id_produto")]
-        public string id_produto { get; set; }
+        public string IdProduto { get; set; }
 
         [BsonElement("valor")]
-        public double valor { get; set; }
+        public double Valor { get; set; }
 
         [BsonElement("quantidade")]
-        public int quantidade { get; set; }
+        public int Quantidade { get; set; }
 
         public static implicit operator ItemMovimentacaoDTO(ItemMovimentacao model)
         {
             return new ItemMovimentacaoDTO()
             {
-                id = model.id.ToString(),
-                id_estoque = model.id_estoque,
-                id_produto = model.id_produto,
-                valor = model.valor,
-                quantidade = model.quantidade
+                Id = model.Id.ToString(),
+                IdEstoque = model.IdEstoque,
+                IdProduto = model.IdProduto,
+                Valor = model.Valor,
+                Quantidade = model.Quantidade
             };
         }
     }

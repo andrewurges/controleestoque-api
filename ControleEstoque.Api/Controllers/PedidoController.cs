@@ -1,4 +1,5 @@
 ﻿using ControleEstoque.Api.Interface;
+using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Model;
@@ -88,11 +89,18 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] Pedido model)
+        public IActionResult Criar([FromBody] PedidoRequest model)
         {
             try
             {
-                return Ok((PedidoDTO)_pedidoService.Create(model));
+                return Ok((PedidoDTO)_pedidoService.Create(new Pedido() 
+                { 
+                    NomeCliente = model.NomeCliente,
+                    Data = model.Data,
+                    ListaProduto = model.ListaProduto,
+                    SituacaoPagamento = model.SituacaoPagamento,
+                    SituacaoPedido = model.SituacaoPedido
+                }));
             }
             catch (Exception e)
             {
@@ -109,14 +117,21 @@ namespace ControleEstoque.Api.Controllers
         /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public IActionResult Atualizar([FromRoute] string id, [FromBody] Pedido model)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] PedidoRequest model)
         {
             try
             {
-                if (_pedidoService.Get(ObjectId.Parse(id)) == null)
+                var pedido = _pedidoService.Get(ObjectId.Parse(id));
+                if (pedido == null)
                     throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                return Ok((PedidoDTO)_pedidoService.Update(ObjectId.Parse(id), model));
+                pedido.NomeCliente = model.NomeCliente;
+                pedido.Data = model.Data;
+                pedido.ListaProduto = model.ListaProduto;
+                pedido.SituacaoPagamento = model.SituacaoPagamento;
+                pedido.SituacaoPedido = model.SituacaoPedido;
+
+                return Ok((PedidoDTO)_pedidoService.Update(ObjectId.Parse(id), pedido));
             }
             catch (Exception e)
             {
