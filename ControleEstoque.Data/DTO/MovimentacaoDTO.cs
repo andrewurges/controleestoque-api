@@ -12,6 +12,9 @@ namespace ControleEstoque.Data.DTO
         [JsonProperty("tipo")]
         public ETipoMovimentacao Tipo { get; set; }
 
+        [JsonProperty("data")]
+        public string Data { get; set; }
+
         [JsonProperty("itens")]
         public List<ItemMovimentacaoDTO> Itens { get; set; }
     }

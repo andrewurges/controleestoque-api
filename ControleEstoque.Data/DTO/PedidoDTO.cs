@@ -14,10 +14,10 @@ namespace ControleEstoque.Data.DTO
         public string NomeCliente { get; set; }
 
         [JsonProperty("listaProduto")]
-        public List<string> ListaProduto { get; set; }
+        public List<ItemPedidoDTO> ListaProduto { get; set; }
 
         [JsonProperty("data")]
-        public DateTime Data { get; set; }
+        public string Data { get; set; }
 
         [JsonProperty("situacaoPedido")]
         public ESituacaoPedido SituacaoPedido { get; set; }
