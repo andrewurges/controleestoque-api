@@ -1,6 +1,5 @@
 ﻿using ControleEstoque.Data.Enum;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 
 namespace ControleEstoque.Data.DTO
@@ -16,8 +15,14 @@ namespace ControleEstoque.Data.DTO
         [JsonProperty("listaProduto")]
         public List<ItemPedidoDTO> ListaProduto { get; set; }
 
-        [JsonProperty("data")]
-        public string Data { get; set; }
+        [JsonProperty("historico")]
+        public List<HistoricoPedidoDTO> Historico { get; set; }
+
+        [JsonProperty("dataCriacao")]
+        public string DataCriacao { get; set; }
+
+        [JsonProperty("dataAtualizacao")]
+        public string DataAtualizacao { get; set; }
 
         [JsonProperty("situacaoPedido")]
         public ESituacaoPedido SituacaoPedido { get; set; }

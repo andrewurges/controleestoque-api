@@ -85,20 +85,20 @@ namespace ControleEstoque.Api.Controllers
         /// <summary>
         ///     Realiza a criação de um novo estoque.
         /// </summary>
-        /// <param name="model">Objeto com os dados do estoque</param>
+        /// <param name="requestBody">Objeto com os dados do estoque</param>
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] EstoqueRequest model)
+        public IActionResult Criar([FromBody] EstoqueRequest requestBody)
         {
             try
             {
                 return Ok((EstoqueDTO)_estoqueService.Create(new Estoque()
                 {
-                    Descricao = model.Descricao,
-                    QuantidadeDisponivel = model.QuantidadeDisponivel,
-                    Preco = model.Preco,
-                    UnidadeMedida = model.UnidadeMedida
+                    Descricao = requestBody.Descricao,
+                    QuantidadeDisponivel = requestBody.QuantidadeDisponivel,
+                    Preco = requestBody.Preco,
+                    UnidadeMedida = requestBody.UnidadeMedida
                 }));
             }
             catch (Exception e)
@@ -112,11 +112,11 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a atualização do estoque do ID informado.
         /// </summary>
         /// <param name="id">Código identificador do estoque</param>
-        /// <param name="model">Objeto com os dados do estoque</param>
+        /// <param name="requestBody">Objeto com os dados do estoque</param>
         /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public IActionResult Atualizar([FromRoute] string id, [FromBody] EstoqueRequest model)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] EstoqueRequest requestBody)
         {
             try
             {
@@ -124,10 +124,10 @@ namespace ControleEstoque.Api.Controllers
                 if (estoque == null)
                     throw new Exception($"Estoque com o ID {id} não foi encontrado.");
 
-                estoque.Descricao = model.Descricao;
-                estoque.Preco = model.Preco;
-                estoque.UnidadeMedida = model.UnidadeMedida;
-                estoque.QuantidadeDisponivel = model.QuantidadeDisponivel;
+                estoque.Descricao = requestBody.Descricao;
+                estoque.Preco = requestBody.Preco;
+                estoque.UnidadeMedida = requestBody.UnidadeMedida;
+                estoque.QuantidadeDisponivel = requestBody.QuantidadeDisponivel;
 
                 return Ok((EstoqueDTO)_estoqueService.Update(ObjectId.Parse(id), estoque));
             }

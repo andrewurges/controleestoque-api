@@ -85,19 +85,19 @@ namespace ControleEstoque.Api.Controllers
         /// <summary>
         ///     Realiza a criação de uma nova receita.
         /// </summary>
-        /// <param name="model">Objeto com os dados da receita</param>
+        /// <param name="requestBody">Objeto com os dados da receita</param>
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] ReceitaRequest model)
+        public IActionResult Criar([FromBody] ReceitaRequest requestBody)
         {
             try
             {
                 return Ok((ReceitaDTO)_receitaService.Create(new Receita() 
                 { 
-                    IdProduto = model.IdProduto,
-                    ModoPreparo = model.ModoPreparo,
-                    Ingredientes = model.Ingredientes
+                    IdProduto = requestBody.IdProduto,
+                    ModoPreparo = requestBody.ModoPreparo,
+                    Ingredientes = requestBody.Ingredientes
                 }));
             }
             catch (Exception e)
@@ -111,11 +111,11 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a atualização da receita do ID informado.
         /// </summary>
         /// <param name="id">Código identificador da receita</param>
-        /// <param name="model">Objeto com os dados da receita</param>
+        /// <param name="requestBody">Objeto com os dados da receita</param>
         /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public IActionResult Atualizar([FromRoute] string id, [FromBody] ReceitaRequest model)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] ReceitaRequest requestBody)
         {
             try
             {
@@ -123,9 +123,9 @@ namespace ControleEstoque.Api.Controllers
                 if (receita == null)
                     throw new Exception($"Receita com o ID {id} não foi encontrado.");
 
-                receita.IdProduto = model.IdProduto;
-                receita.ModoPreparo = model.ModoPreparo;
-                receita.Ingredientes = model.Ingredientes;
+                receita.IdProduto = requestBody.IdProduto;
+                receita.ModoPreparo = requestBody.ModoPreparo;
+                receita.Ingredientes = requestBody.Ingredientes;
 
                 return Ok((ReceitaDTO)_receitaService.Update(ObjectId.Parse(id), receita));
             }

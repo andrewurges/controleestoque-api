@@ -85,19 +85,19 @@ namespace ControleEstoque.Api.Controllers
         /// <summary>
         ///     Realiza a criação de um novo produto.
         /// </summary>
-        /// <param name="model">Objeto com os dados do produto</param>
+        /// <param name="requestBody">Objeto com os dados do produto</param>
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] ProdutoRequest model)
+        public IActionResult Criar([FromBody] ProdutoRequest requestBody)
         {
             try
             {
                 return Ok((ProdutoDTO)_produtoService.Create(new Produto() 
                 { 
-                    Descricao = model.Descricao,
-                    Preco = model.Preco,
-                    QuantidadeDisponivel = model.QuantidadeDisponivel
+                    Descricao = requestBody.Descricao,
+                    Preco = requestBody.Preco,
+                    QuantidadeDisponivel = requestBody.QuantidadeDisponivel
                 }));
             }
             catch (Exception e)
@@ -111,11 +111,11 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a atualização do produto do ID informado.
         /// </summary>
         /// <param name="id">Código identificador do produto</param>
-        /// <param name="model">Objeto com os dados do produto</param>
+        /// <param name="requestBody">Objeto com os dados do produto</param>
         /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public IActionResult Atualizar([FromRoute] string id, [FromBody] ProdutoRequest model)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] ProdutoRequest requestBody)
         {
             try
             {
@@ -123,9 +123,9 @@ namespace ControleEstoque.Api.Controllers
                 if (produto == null)
                     throw new Exception($"Produto com o ID {id} não foi encontrado.");
 
-                produto.Descricao = model.Descricao;
-                produto.Preco = model.Preco;
-                produto.QuantidadeDisponivel = model.QuantidadeDisponivel;
+                produto.Descricao = requestBody.Descricao;
+                produto.Preco = requestBody.Preco;
+                produto.QuantidadeDisponivel = requestBody.QuantidadeDisponivel;
 
                 return Ok((ProdutoDTO)_produtoService.Update(ObjectId.Parse(id), produto));
             }

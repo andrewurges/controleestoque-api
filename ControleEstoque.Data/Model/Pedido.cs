@@ -2,7 +2,6 @@
 using ControleEstoque.Data.Enum;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,6 +12,7 @@ namespace ControleEstoque.Data.Model
         public Pedido()
         {
             ListaProduto = new List<ItemPedido>();
+            Historico = new List<HistoricoPedido>();
         }
 
         [BsonId()]
@@ -24,8 +24,14 @@ namespace ControleEstoque.Data.Model
         [BsonElement("lista_produto")]
         public List<ItemPedido> ListaProduto { get; set; }
 
-        [BsonElement("data")]
-        public string Data { get; set; }
+        [BsonElement("historico")]
+        public List<HistoricoPedido> Historico { get; set; }
+
+        [BsonElement("data_criacao")]
+        public string DataCriacao { get; set; }
+
+        [BsonElement("data_atualizacao")]
+        public string DataAtualizacao { get; set; }
 
         [BsonElement("situacao_pedido")]
         public ESituacaoPedido SituacaoPedido { get; set; }
@@ -40,7 +46,9 @@ namespace ControleEstoque.Data.Model
                 Id = model.Id.ToString(),
                 NomeCliente = model.NomeCliente,
                 ListaProduto = model.ListaProduto.Select<ItemPedido, ItemPedidoDTO>(x => x).ToList(),
-                Data = model.Data,
+                Historico = model.Historico.Select<HistoricoPedido, HistoricoPedidoDTO>(x => x).ToList(),
+                DataCriacao = model.DataCriacao,
+                DataAtualizacao = model.DataAtualizacao,
                 SituacaoPedido = model.SituacaoPedido,
                 SituacaoPagamento = model.SituacaoPagamento
             };

@@ -60,19 +60,19 @@ namespace ControleEstoque.Api.Controllers
         /// <summary>
         ///     Realiza a criação de uma nova movimentação.
         /// </summary>
-        /// <param name="model">Objeto com os dados da movimentação</param>
+        /// <param name="requestBody">Objeto com os dados da movimentação</param>
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] MovimentacaoRequest model)
+        public IActionResult Criar([FromBody] MovimentacaoRequest requestBody)
         {
             try
             {
                 return Ok((MovimentacaoDTO)_movimentacaoService.Create(new Movimentacao() 
                 { 
-                    Tipo = model.Tipo,
-                    Data = model.Data,
-                    Itens = model.Itens
+                    Tipo = requestBody.Tipo,
+                    Data = DateTime.Now.ToString("dd/MM/yyyy"),
+                    Itens = requestBody.Itens
                 }));
             }
             catch (Exception e)
