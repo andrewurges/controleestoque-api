@@ -53,7 +53,9 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                List<PedidoDTO> lst = _pedidoService.GetAll().Select(x => (PedidoDTO)x).ToList();
+                List<PedidoDTO> lst = _pedidoService.GetAll().Select(x => (PedidoDTO)x)
+                    .OrderBy(x => DateTime.Parse(x.DataCriacao))
+                    .ToList();
 
                 return Ok(GetPedidoEnumerable(lst));
             }
