@@ -162,7 +162,8 @@ namespace ControleEstoque.Api.Controllers
                                        select new
                                        {
                                            Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
-                                           t.Quantidade
+                                           t.Quantidade,
+                                           t.PrecoUnidade
                                        },
                        e.Historico,
                        e.DataCriacao,

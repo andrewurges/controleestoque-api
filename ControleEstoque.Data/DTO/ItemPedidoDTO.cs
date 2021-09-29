@@ -9,5 +9,8 @@ namespace ControleEstoque.Data.DTO
 
         [JsonProperty("quantidade")]
         public int Quantidade { get; set; }
+
+        [JsonProperty("precoUnidade")]
+        public int PrecoUnidade { get; set; }
     }
 }

@@ -11,12 +11,16 @@ namespace ControleEstoque.Data.Model
         [BsonElement("quantidade")]
         public int Quantidade { get; set; }
 
+        [BsonElement("preco_unidade")]
+        public int PrecoUnidade { get; set; }
+
         public static implicit operator ItemPedidoDTO(ItemPedido model)
         {
             return new ItemPedidoDTO()
             {
                 IdProduto = model.IdProduto,
-                Quantidade = model.Quantidade
+                Quantidade = model.Quantidade,
+                PrecoUnidade = model.PrecoUnidade
             };
         }
     }
