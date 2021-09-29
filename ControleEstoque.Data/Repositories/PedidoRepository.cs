@@ -75,7 +75,9 @@ namespace ControleEstoque.Data.Repositories
                 var update = new UpdateDefinitionBuilder<Pedido>()
                     .Set(n => n.NomeCliente, model.NomeCliente)
                     .Set(n => n.ListaProduto, model.ListaProduto)
-                    .Set(n => n.Data, model.Data)
+                    .Set(n => n.Historico, model.Historico)
+                    .Set(n => n.DataCriacao, model.DataCriacao)
+                    .Set(n => n.DataAtualizacao, model.DataAtualizacao)
                     .Set(n => n.SituacaoPedido, model.SituacaoPedido)
                     .Set(n => n.SituacaoPagamento, model.SituacaoPagamento);
 

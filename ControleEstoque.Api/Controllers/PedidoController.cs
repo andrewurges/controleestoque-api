@@ -2,6 +2,7 @@
 using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
+using ControleEstoque.Data.Enum;
 using ControleEstoque.Data.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -24,16 +25,21 @@ namespace ControleEstoque.Api.Controllers
     public class PedidoController : ControllerBase
     {
         private IControleEstoqueService<Pedido> _pedidoService;
+        private IControleEstoqueService<Produto> _produtoService;
         private readonly ILogger<PedidoController> _logger;
 
         /// <summary>
         ///     Construtor da Controller
         /// </summary>
         /// <param name="pedidoService"></param>
+        /// <param name="produtoService"></param>
         /// <param name="logger"></param>
-        public PedidoController(PedidoService pedidoService, ILogger<PedidoController> logger)
+        public PedidoController(PedidoService pedidoService, 
+            ProdutoService produtoService,
+            ILogger<PedidoController> logger)
         {
             _pedidoService = pedidoService;
+            _produtoService = produtoService;
             _logger = logger;
         }
 
@@ -49,7 +55,7 @@ namespace ControleEstoque.Api.Controllers
             {
                 List<PedidoDTO> lst = _pedidoService.GetAll().Select(x => (PedidoDTO)x).ToList();
 
-                return Ok(lst);
+                return Ok(GetPedidoEnumerable(lst));
             }
             catch (Exception e)
             {
@@ -73,7 +79,9 @@ namespace ControleEstoque.Api.Controllers
                 if (pedido == null)
                     throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                return Ok((PedidoDTO)pedido);
+                var lst = new List<PedidoDTO>() { pedido };
+
+                return Ok(GetPedidoEnumerable(lst).FirstOrDefault());
             }
             catch (Exception e)
             {
@@ -85,22 +93,23 @@ namespace ControleEstoque.Api.Controllers
         /// <summary>
         ///     Realiza a criação de um novo pedido.
         /// </summary>
-        /// <param name="model">Objeto com os dados do pedido</param>
+        /// <param name="requestBody">Objeto com os dados do pedido</param>
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] PedidoRequest model)
+        public IActionResult Criar([FromBody] CriarPedidoRequest requestBody)
         {
             try
             {
-                return Ok((PedidoDTO)_pedidoService.Create(new Pedido() 
-                { 
-                    NomeCliente = model.NomeCliente,
-                    Data = model.Data,
-                    ListaProduto = model.ListaProduto,
-                    SituacaoPagamento = model.SituacaoPagamento,
-                    SituacaoPedido = model.SituacaoPedido
-                }));
+                var novoPedido = (PedidoDTO)_pedidoService.Create(new Pedido()
+                {
+                    NomeCliente = requestBody.NomeCliente,
+                    ListaProduto = requestBody.ListaProduto
+                });
+
+                var lst = new List<PedidoDTO>() { novoPedido };
+
+                return Ok(GetPedidoEnumerable(lst).FirstOrDefault());
             }
             catch (Exception e)
             {
@@ -113,11 +122,11 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a atualização do pedido do ID informado.
         /// </summary>
         /// <param name="id">Código identificador do pedido</param>
-        /// <param name="model">Objeto com os dados do pedido</param>
+        /// <param name="requestBody">Objeto com os dados do pedido</param>
         /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public IActionResult Atualizar([FromRoute] string id, [FromBody] PedidoRequest model)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] AtualizarPedidoRequest requestBody)
         {
             try
             {
@@ -125,13 +134,15 @@ namespace ControleEstoque.Api.Controllers
                 if (pedido == null)
                     throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                pedido.NomeCliente = model.NomeCliente;
-                pedido.Data = model.Data;
-                pedido.ListaProduto = model.ListaProduto;
-                pedido.SituacaoPagamento = model.SituacaoPagamento;
-                pedido.SituacaoPedido = model.SituacaoPedido;
+                pedido.NomeCliente = requestBody.NomeCliente;
+                pedido.ListaProduto = requestBody.ListaProduto;
+                pedido.SituacaoPagamento = requestBody.SituacaoPagamento;
+                pedido.SituacaoPedido = requestBody.SituacaoPedido;
 
-                return Ok((PedidoDTO)_pedidoService.Update(ObjectId.Parse(id), pedido));
+                var pedidoAtualizado = (PedidoDTO)_pedidoService.Update(ObjectId.Parse(id), pedido);
+                var lst = new List<PedidoDTO>() { pedidoAtualizado };
+
+                return Ok(GetPedidoEnumerable(lst).FirstOrDefault());
             }
             catch (Exception e)
             {
@@ -140,27 +151,25 @@ namespace ControleEstoque.Api.Controllers
             }
         }
 
-        /// <summary>
-        ///     Realiza a remoção do pedido através do ID informado.
-        /// </summary>
-        /// <param name="id">Código identificador do pedido</param>
-        /// <returns>Objeto removido</returns>
-        [HttpDelete("remover/{id}")]
-        [Produces("application/json")]
-        public IActionResult Remover([FromRoute] string id)
+        private IEnumerable<object> GetPedidoEnumerable(List<PedidoDTO> lst)
         {
-            try
-            {
-                if (_pedidoService.Get(ObjectId.Parse(id)) == null)
-                    throw new Exception($"Pedido com o ID {id} não foi encontrado.");
-
-                return Ok((PedidoDTO)_pedidoService.Delete(ObjectId.Parse(id)));
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"pedido/remover/{id} - {e.Message}");
-                return BadRequest(e.Message);
-            }
+            return from e in lst.AsQueryable()
+                   select new
+                   {
+                       e.Id,
+                       e.NomeCliente,
+                       ListaProduto = from t in e.ListaProduto.AsQueryable()
+                                       select new
+                                       {
+                                           Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
+                                           t.Quantidade
+                                       },
+                       e.Historico,
+                       e.DataCriacao,
+                       e.DataAtualizacao,
+                       e.SituacaoPedido,
+                       e.SituacaoPagamento
+                   };
         }
     }
 }

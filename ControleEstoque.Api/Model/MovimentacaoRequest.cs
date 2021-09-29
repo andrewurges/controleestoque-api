@@ -10,9 +10,6 @@ namespace ControleEstoque.Api.Model
         [JsonProperty("tipo")]
         public ETipoMovimentacao Tipo { get; set; }
 
-        [JsonProperty("data")]
-        public string Data { get; set; }
-
         [JsonProperty("itens")]
         public List<ItemMovimentacao> Itens { get; set; }
     }

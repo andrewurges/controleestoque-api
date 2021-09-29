@@ -85,19 +85,19 @@ namespace ControleEstoque.Api.Controllers
         /// <summary>
         ///     Realiza a criação de um novo consumo.
         /// </summary>
-        /// <param name="model">Objeto com os dados do consumo</param>
+        /// <param name="requestBody">Objeto com os dados do consumo</param>
         /// <returns>Objeto criado</returns>
         [HttpPost("criar")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] ConsumoRequest model)
+        public IActionResult Criar([FromBody] ConsumoRequest requestBody)
         {
             try
             {
                 return Ok((ConsumoDTO)_consumoService.Create(new Consumo()
                 {
-                    Agua = model.Agua,
-                    Energia = model.Energia,
-                    MaoDeObra = model.MaoDeObra
+                    Agua = requestBody.Agua,
+                    Energia = requestBody.Energia,
+                    MaoDeObra = requestBody.MaoDeObra
                 }));
             }
             catch (Exception e)
@@ -111,11 +111,11 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a atualização do consumo do ID informado.
         /// </summary>
         /// <param name="id">Código identificador do consumo</param>
-        /// <param name="model">Objeto com os dados do consumo</param>
+        /// <param name="requestBody">Objeto com os dados do consumo</param>
         /// <returns>Objeto atualizado</returns>
         [HttpPost("atualizar/{id}")]
         [Produces("application/json")]
-        public IActionResult Atualizar([FromRoute] string id, [FromBody] ConsumoRequest model)
+        public IActionResult Atualizar([FromRoute] string id, [FromBody] ConsumoRequest requestBody)
         {
             try
             {
@@ -123,9 +123,9 @@ namespace ControleEstoque.Api.Controllers
                 if (consumo == null)
                     throw new Exception($"Consumo com o ID {id} não foi encontrado.");
 
-                consumo.Agua = model.Agua;
-                consumo.Energia = model.Energia;
-                consumo.MaoDeObra = model.MaoDeObra;
+                consumo.Agua = requestBody.Agua;
+                consumo.Energia = requestBody.Energia;
+                consumo.MaoDeObra = requestBody.MaoDeObra;
 
                 return Ok((ConsumoDTO)_consumoService.Update(ObjectId.Parse(id), consumo));
             }
