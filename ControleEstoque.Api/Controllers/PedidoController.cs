@@ -55,26 +55,7 @@ namespace ControleEstoque.Api.Controllers
             {
                 List<PedidoDTO> lst = _pedidoService.GetAll().Select(x => (PedidoDTO)x).ToList();
 
-                var query =
-                    from e in lst.AsQueryable<PedidoDTO>()
-                    select new
-                    {
-                        e.Id,
-                        e.NomeCliente,
-                        ListaProduto = from t in e.ListaProduto.AsQueryable<ItemPedidoDTO>()
-                                       select new 
-                                       { 
-                                           Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
-                                           t.Quantidade
-                                       },
-                        e.Historico,
-                        e.DataCriacao,
-                        e.DataAtualizacao,
-                        e.SituacaoPedido,
-                        e.SituacaoPagamento
-                    };
-
-                return Ok(query);
+                return Ok(GetPedidoEnumerable(lst));
             }
             catch (Exception e)
             {
@@ -98,7 +79,9 @@ namespace ControleEstoque.Api.Controllers
                 if (pedido == null)
                     throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                return Ok((PedidoDTO)pedido);
+                var lst = new List<PedidoDTO>() { pedido };
+
+                return Ok(GetPedidoEnumerable(lst).FirstOrDefault());
             }
             catch (Exception e)
             {
@@ -118,11 +101,15 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                return Ok((PedidoDTO)_pedidoService.Create(new Pedido()
+                var novoPedido = (PedidoDTO)_pedidoService.Create(new Pedido()
                 {
                     NomeCliente = requestBody.NomeCliente,
                     ListaProduto = requestBody.ListaProduto
-                }));
+                });
+
+                var lst = new List<PedidoDTO>() { novoPedido };
+
+                return Ok(GetPedidoEnumerable(lst).FirstOrDefault());
             }
             catch (Exception e)
             {
@@ -152,13 +139,37 @@ namespace ControleEstoque.Api.Controllers
                 pedido.SituacaoPagamento = requestBody.SituacaoPagamento;
                 pedido.SituacaoPedido = requestBody.SituacaoPedido;
 
-                return Ok((PedidoDTO)_pedidoService.Update(ObjectId.Parse(id), pedido));
+                var pedidoAtualizado = (PedidoDTO)_pedidoService.Update(ObjectId.Parse(id), pedido);
+                var lst = new List<PedidoDTO>() { pedidoAtualizado };
+
+                return Ok(GetPedidoEnumerable(lst).FirstOrDefault());
             }
             catch (Exception e)
             {
                 _logger.LogError($"pedido/atualizar/{id} - {e.Message}");
                 return BadRequest(e.Message);
             }
+        }
+
+        private IEnumerable<object> GetPedidoEnumerable(List<PedidoDTO> lst)
+        {
+            return from e in lst.AsQueryable()
+                   select new
+                   {
+                       e.Id,
+                       e.NomeCliente,
+                       ListaProduto = from t in e.ListaProduto.AsQueryable()
+                                       select new
+                                       {
+                                           Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
+                                           t.Quantidade
+                                       },
+                       e.Historico,
+                       e.DataCriacao,
+                       e.DataAtualizacao,
+                       e.SituacaoPedido,
+                       e.SituacaoPagamento
+                   };
         }
     }
 }
