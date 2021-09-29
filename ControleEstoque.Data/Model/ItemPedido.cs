@@ -12,7 +12,7 @@ namespace ControleEstoque.Data.Model
         public int Quantidade { get; set; }
 
         [BsonElement("preco_unidade")]
-        public int PrecoUnidade { get; set; }
+        public double PrecoUnidade { get; set; }
 
         public static implicit operator ItemPedidoDTO(ItemPedido model)
         {
