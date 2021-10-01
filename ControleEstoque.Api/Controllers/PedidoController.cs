@@ -53,9 +53,41 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                List<PedidoDTO> lst = _pedidoService.GetAll().Select(x => (PedidoDTO)x).ToList();
+                List<PedidoDTO> lst = _pedidoService.GetAll().Select(x => (PedidoDTO)x)
+                    .OrderByDescending(x => DateTime.Parse(x.DataCriacao))
+                    .ToList();
 
                 return Ok(GetPedidoEnumerable(lst));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"pedido/listar - {e.Message}");
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        ///     Realiza a busca de todos os pedidos agrupado por data de criação.
+        /// </summary>
+        /// <returns>Lista de pedidos agrupada</returns>
+        [HttpGet("listar-agrupado")]
+        [Produces("application/json")]
+        public IActionResult ListarAgrupado()
+        {
+            try
+            {
+                var agrupado = _pedidoService.GetAll().Select(x => (PedidoDTO)x)
+                    .OrderByDescending(x => DateTime.Parse(x.DataCriacao))
+                    .GroupBy(x => DateTime.Parse(x.DataCriacao))
+                    .ToList();
+
+                var lst = agrupado.Select(x => new
+                {
+                    Data = x.Key.ToString("dd/MM/yyyy"),
+                    Pedidos = GetPedidoEnumerable(x.Select(s => s).ToList())
+                });
+
+                return Ok(lst);
             }
             catch (Exception e)
             {
@@ -104,7 +136,8 @@ namespace ControleEstoque.Api.Controllers
                 var novoPedido = (PedidoDTO)_pedidoService.Create(new Pedido()
                 {
                     NomeCliente = requestBody.NomeCliente,
-                    ListaProduto = requestBody.ListaProduto
+                    ListaProduto = requestBody.ListaProduto,
+                    SituacaoPagamento = requestBody.SituacaoPagamento
                 });
 
                 var lst = new List<PedidoDTO>() { novoPedido };
