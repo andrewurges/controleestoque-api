@@ -35,7 +35,6 @@ namespace ControleEstoque.Api.Services
             model.DataCriacao = DateTime.Now.ToString("dd/MM/yyyy");
             model.DataAtualizacao = "";
             model.SituacaoPedido = ESituacaoPedido.AFazer;
-            model.SituacaoPagamento = ESituacaoPagamento.Pendente;
             model.Historico.Add(new HistoricoPedido()
             {
                 Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),

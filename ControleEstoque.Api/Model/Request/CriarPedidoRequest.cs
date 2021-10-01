@@ -1,4 +1,5 @@
-﻿using ControleEstoque.Data.Model;
+﻿using ControleEstoque.Data.Enum;
+using ControleEstoque.Data.Model;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
@@ -11,5 +12,8 @@ namespace ControleEstoque.Api.Model
 
         [JsonProperty("listaProduto")]
         public List<ItemPedido> ListaProduto { get; set; }
+
+        [JsonProperty("situacaoPagamento")]
+        public ESituacaoPagamento SituacaoPagamento { get; set; }
     }
 }
