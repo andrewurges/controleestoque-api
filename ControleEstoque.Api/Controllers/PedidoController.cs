@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace ControleEstoque.Api.Controllers
@@ -77,13 +78,13 @@ namespace ControleEstoque.Api.Controllers
             try
             {
                 var agrupado = _pedidoService.GetAll().Select(x => (PedidoDTO)x)
-                    .OrderByDescending(x => DateTime.Parse(x.DataCriacao))
-                    .GroupBy(x => DateTime.Parse(x.DataCriacao))
+                    .OrderByDescending(x => DateTime.ParseExact(x.DataCriacao, "dd/MM/yyyy", CultureInfo.InvariantCulture))
+                    .GroupBy(x => x.DataCriacao)
                     .ToList();
 
                 var lst = agrupado.Select(x => new
                 {
-                    Data = x.Key.ToString("dd/MM/yyyy"),
+                    Data = x.Key,
                     Pedidos = GetPedidoEnumerable(x.Select(s => s).ToList())
                 });
 
