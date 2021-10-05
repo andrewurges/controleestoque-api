@@ -97,31 +97,55 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a busca da quantidade total de pedidos por situação.
         /// </summary>
         /// <returns>Total de pedidos por situação</returns>
-        [HttpGet("total-pedidos")]
+        [HttpGet("total-fazer")]
         [Produces("application/json")]
-        public IActionResult BuscarTotalPedidos()
+        public IActionResult BuscarTotalAFazer()
         {
             try
             {
-                var lst = _pedidoService.GetAll().ToList();
-                var total = new List<TotalPedidoResponse>();
+                List<PedidoDTO> lst = _pedidoService.GetAll(x => x.SituacaoPedido == ESituacaoPedido.AFazer)
+                    .Select(x => (PedidoDTO)x)
+                    .OrderByDescending(x => DateTime.Parse(x.DataCriacao))
+                    .ToList();
 
-                foreach (ESituacaoPedido situacao in (ESituacaoPedido[])Enum.GetValues(typeof(ESituacaoPedido)))
-                {
-                    total.Add(new TotalPedidoResponse()
+                var query = 
+                    from e in lst.AsQueryable()
+                    select new
                     {
-                        Situacao = situacao,
-                        Quantidade = lst.FindAll(x => x.SituacaoPedido == situacao).Count()
-                    });
-                }
+                        Quantidade = lst.Count(),
+                        Pedidos = GetPedidoEnumerable(lst.Select(s => s).ToList())
+                    };
 
-                return Ok(total);
+                return Ok(query.FirstOrDefault());
             }
             catch (Exception e)
             {
-                _logger.LogError($"dashboard/total-pedidos - {e.Message}");
+                _logger.LogError($"dashboard/total-fazer - {e.Message}");
                 return BadRequest(e.Message);
             }
+        }
+
+        private IEnumerable<object> GetPedidoEnumerable(List<PedidoDTO> lst)
+        {
+            return
+                from e in lst.AsQueryable()
+                select new
+                {
+                    e.Id,
+                    e.NomeCliente,
+                    ListaProduto = from t in e.ListaProduto.AsQueryable()
+                                   select new
+                                   {
+                                       Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
+                                       t.Quantidade,
+                                       t.PrecoUnidade
+                                   },
+                    e.Historico,
+                    e.DataCriacao,
+                    e.DataAtualizacao,
+                    e.SituacaoPedido,
+                    e.SituacaoPagamento
+                };
         }
     }
 }
