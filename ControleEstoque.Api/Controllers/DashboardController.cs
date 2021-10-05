@@ -49,20 +49,23 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a busca do valor total de produtos em estoque.
         /// </summary>
         /// <returns>Valor total</returns>
-        [HttpGet("total-produtos")]
+        [HttpGet("total-estoque")]
         [Produces("application/json")]
-        public IActionResult BuscarTotalProdutos()
+        public IActionResult BuscarTotalEstoque()
         {
             try
             {
-                return Ok(new TotalProdutosResponse()
+                var lst = _produtoService.GetAll(x => x.QuantidadeDisponivel > 0).Select(x => (ProdutoDTO)x).ToList();
+
+                return Ok(new TotalEstoqueResponse()
                 {
-                    TotalProdutos = _produtoService.GetAll(x => x.QuantidadeDisponivel > 0).Sum(x => x.Preco * x.QuantidadeDisponivel)
+                    Total = lst.Sum(x => x.Preco * x.QuantidadeDisponivel),
+                    Produtos = lst
                 });
             }
             catch (Exception e)
             {
-                _logger.LogError($"dashboard/total-produtos - {e.Message}");
+                _logger.LogError($"dashboard/total-estoque - {e.Message}");
                 return BadRequest(e.Message);
             }
         }
@@ -71,17 +74,48 @@ namespace ControleEstoque.Api.Controllers
         ///     Realiza a busca do valor total em pedidos a receber.
         /// </summary>
         /// <returns>Valor total</returns>
+        [HttpGet("total-receber")]
+        [Produces("application/json")]
+        public IActionResult BuscarTotalReceber()
+        {
+            try
+            {
+                return Ok(new TotalReceberResponse()
+                {
+                    Total = _pedidoService.GetAll(x => x.SituacaoPagamento == ESituacaoPagamento.Pendente)
+                        .Sum(x => x.ListaProduto.Sum(t => t.Quantidade * t.PrecoUnidade))
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"dashboard/total-receber - {e.Message}");
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        ///     Realiza a busca da quantidade total de pedidos por situação.
+        /// </summary>
+        /// <returns>Total de pedidos por situação</returns>
         [HttpGet("total-pedidos")]
         [Produces("application/json")]
         public IActionResult BuscarTotalPedidos()
         {
             try
             {
-                return Ok(new TotalPedidoResponse()
+                var lst = _pedidoService.GetAll().ToList();
+                var total = new List<TotalPedidoResponse>();
+
+                foreach (ESituacaoPedido situacao in (ESituacaoPedido[])Enum.GetValues(typeof(ESituacaoPedido)))
                 {
-                    TotalPedidos = _pedidoService.GetAll(x => x.SituacaoPagamento == ESituacaoPagamento.Pendente)
-                        .Sum(x => x.ListaProduto.Sum(t => t.Quantidade * t.PrecoUnidade))
-                });
+                    total.Add(new TotalPedidoResponse()
+                    {
+                        Situacao = situacao,
+                        Quantidade = lst.FindAll(x => x.SituacaoPedido == situacao).Count()
+                    });
+                }
+
+                return Ok(total);
             }
             catch (Exception e)
             {
