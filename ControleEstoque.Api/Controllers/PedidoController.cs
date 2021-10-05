@@ -186,24 +186,25 @@ namespace ControleEstoque.Api.Controllers
 
         private IEnumerable<object> GetPedidoEnumerable(List<PedidoDTO> lst)
         {
-            return from e in lst.AsQueryable()
-                   select new
-                   {
-                       e.Id,
-                       e.NomeCliente,
-                       ListaProduto = from t in e.ListaProduto.AsQueryable()
-                                       select new
-                                       {
-                                           Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
-                                           t.Quantidade,
-                                           t.PrecoUnidade
-                                       },
-                       e.Historico,
-                       e.DataCriacao,
-                       e.DataAtualizacao,
-                       e.SituacaoPedido,
-                       e.SituacaoPagamento
-                   };
+            return 
+                from e in lst.AsQueryable()
+                select new
+                {
+                    e.Id,
+                    e.NomeCliente,
+                    ListaProduto = from t in e.ListaProduto.AsQueryable()
+                                    select new
+                                    {
+                                        Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
+                                        t.Quantidade,
+                                        t.PrecoUnidade
+                                    },
+                    e.Historico,
+                    e.DataCriacao,
+                    e.DataAtualizacao,
+                    e.SituacaoPedido,
+                    e.SituacaoPagamento
+                };
         }
     }
 }
