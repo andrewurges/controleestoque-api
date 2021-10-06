@@ -139,20 +139,18 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var total = _movimentacaoService.GetAll().GroupBy(x => x.Tipo)
-                    .Select(x => new
-                    {
-                        TotalEntrada = x.Where(t => t.Tipo == ETipoMovimentacao.Entrada).Sum(t => t.Valor),
-                        TotalSaida = x.Where(t => t.Tipo == ETipoMovimentacao.Saida).Sum(t => t.Valor)
-                    })
-                    .Select(x => new
-                    {
-                        x.TotalEntrada,
-                        x.TotalSaida,
-                        TotalLucroLiquido = x.TotalSaida - x.TotalEntrada
-                    }).FirstOrDefault();
+                var lst = _movimentacaoService.GetAll();
 
-                return Ok(total);
+                var totalEntrada = lst.Where(x => x.Tipo == ETipoMovimentacao.Entrada).Sum(x => x.Valor);
+                var totalSaida= lst.Where(x => x.Tipo == ETipoMovimentacao.Saida).Sum(x => x.Valor);
+                var totalLucroLiquido = totalSaida - totalEntrada;
+
+                return Ok(new TotalMovimentacaoResponse()
+                {
+                    TotalEntrada = totalEntrada,
+                    TotalSaida = totalSaida,
+                    TotalLucroLiquido = totalLucroLiquido
+                });
             }
             catch (Exception e)
             {
