@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,16 +24,25 @@ namespace ControleEstoque.Api.Controllers
     public class MovimentacaoController : ControllerBase
     {
         private IControleEstoqueService<Movimentacao> _movimentacaoService;
+        private IControleEstoqueService<Estoque> _estoqueService;
+        private IControleEstoqueService<Produto> _produtoService;
         private readonly ILogger<MovimentacaoController> _logger;
 
         /// <summary>
         ///     Construtor da Controller
         /// </summary>
         /// <param name="movimentacaoService"></param>
+        /// <param name="estoqueService"></param>
+        /// <param name="produtoService"></param>
         /// <param name="logger"></param>
-        public MovimentacaoController(MovimentacaoService movimentacaoService, ILogger<MovimentacaoController> logger)
+        public MovimentacaoController(MovimentacaoService movimentacaoService, 
+            EstoqueService estoqueService,
+            ProdutoService produtoService,
+            ILogger<MovimentacaoController> logger)
         {
             _movimentacaoService = movimentacaoService;
+            _estoqueService = estoqueService;
+            _produtoService = produtoService;
             _logger = logger;
         }
 
@@ -46,9 +56,11 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                List<MovimentacaoDTO> lst = _movimentacaoService.GetAll().Select(x => (MovimentacaoDTO)x).ToList();
+                List<MovimentacaoDTO> lst = _movimentacaoService.GetAll().Select(x => (MovimentacaoDTO)x)
+                    .OrderByDescending(x => DateTime.Parse(x.Data))
+                    .ToList();
 
-                return Ok(lst);
+                return Ok(GetMovimentacaoEnumerable(lst));
             }
             catch (Exception e)
             {
@@ -68,18 +80,42 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                return Ok((MovimentacaoDTO)_movimentacaoService.Create(new Movimentacao() 
-                { 
+                var novaMovimentacao = (MovimentacaoDTO)_movimentacaoService.Create(new Movimentacao()
+                {
                     Tipo = requestBody.Tipo,
-                    Data = DateTime.Now.ToString("dd/MM/yyyy"),
+                    Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
                     Itens = requestBody.Itens
-                }));
+                });
+
+                var lst = new List<MovimentacaoDTO>() { novaMovimentacao };
+
+                return Ok(GetMovimentacaoEnumerable(lst).FirstOrDefault());
             }
             catch (Exception e)
             {
                 _logger.LogError($"movimentacao/criar - {e.Message}");
                 return BadRequest(e.Message);
             }
+        }
+
+        private IEnumerable<object> GetMovimentacaoEnumerable(List<MovimentacaoDTO> lst)
+        {
+            return
+                from e in lst.AsQueryable()
+                select new
+                {
+                    e.Id,
+                    e.Tipo,
+                    e.Data,
+                    Itens = from t in e.Itens.AsQueryable()
+                                   select new
+                                   {
+                                       Estoque =  t.IdEstoque != "" ? (EstoqueDTO)_estoqueService.Get(ObjectId.Parse(t.IdEstoque)) : null,
+                                       Produto = t.IdProduto != "" ? (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)) : null,
+                                       t.Valor,
+                                       t.Quantidade
+                                   }
+                };
         }
     }
 }
