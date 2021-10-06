@@ -7,9 +7,6 @@ namespace ControleEstoque.Data.DTO
         [JsonProperty("idEstoque")]
         public string IdEstoque { get; set; }
 
-        [JsonProperty("idProduto")]
-        public string IdProduto { get; set; }
-
         [JsonProperty("valor")]
         public double Valor { get; set; }
 

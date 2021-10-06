@@ -26,6 +26,7 @@ namespace ControleEstoque.Api.Controllers
         private IControleEstoqueService<Movimentacao> _movimentacaoService;
         private IControleEstoqueService<Estoque> _estoqueService;
         private IControleEstoqueService<Produto> _produtoService;
+        private IControleEstoqueService<Pedido> _pedidoService;
         private readonly ILogger<MovimentacaoController> _logger;
 
         /// <summary>
@@ -33,15 +34,18 @@ namespace ControleEstoque.Api.Controllers
         /// </summary>
         /// <param name="movimentacaoService"></param>
         /// <param name="estoqueService"></param>
+        /// <param name="pedidoService"></param>
         /// <param name="produtoService"></param>
         /// <param name="logger"></param>
         public MovimentacaoController(MovimentacaoService movimentacaoService, 
             EstoqueService estoqueService,
+            PedidoService pedidoService,
             ProdutoService produtoService,
             ILogger<MovimentacaoController> logger)
         {
             _movimentacaoService = movimentacaoService;
             _estoqueService = estoqueService;
+            _pedidoService = pedidoService;
             _produtoService = produtoService;
             _logger = logger;
         }
@@ -70,13 +74,13 @@ namespace ControleEstoque.Api.Controllers
         }
 
         /// <summary>
-        ///     Realiza a criação de uma nova movimentação.
+        ///     Realiza a movimentação de um pedido.
         /// </summary>
-        /// <param name="requestBody">Objeto com os dados da movimentação</param>
+        /// <param name="requestBody">Objeto com os dados da movimentação do pedido</param>
         /// <returns>Objeto criado</returns>
-        [HttpPost("criar")]
+        [HttpPost("movimentar-pedido")]
         [Produces("application/json")]
-        public IActionResult Criar([FromBody] MovimentacaoRequest requestBody)
+        public IActionResult MovimentarPedido([FromBody] MovimentacaoPedidoRequest requestBody)
         {
             try
             {
@@ -84,7 +88,36 @@ namespace ControleEstoque.Api.Controllers
                 {
                     Tipo = requestBody.Tipo,
                     Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
-                    Itens = requestBody.Itens
+                    IdPedido = requestBody.IdPedido
+                });
+
+                var lst = new List<MovimentacaoDTO>() { novaMovimentacao };
+
+                return Ok(GetMovimentacaoEnumerable(lst).FirstOrDefault());
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"movimentacao/criar - {e.Message}");
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        ///     Realiza a movimentação de itens de estoque.
+        /// </summary>
+        /// <param name="requestBody">Objeto com os dados da movimentação do estoque</param>
+        /// <returns>Objeto criado</returns>
+        [HttpPost("movimentar-estoque")]
+        [Produces("application/json")]
+        public IActionResult MovimentarEstoque([FromBody] MovimentacaoEstoqueRequest requestBody)
+        {
+            try
+            {
+                var novaMovimentacao = (MovimentacaoDTO)_movimentacaoService.Create(new Movimentacao()
+                {
+                    Tipo = requestBody.Tipo,
+                    Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                    ItensEstoque = requestBody.ItensEstoque
                 });
 
                 var lst = new List<MovimentacaoDTO>() { novaMovimentacao };
@@ -107,15 +140,36 @@ namespace ControleEstoque.Api.Controllers
                     e.Id,
                     e.Tipo,
                     e.Data,
-                    Itens = from t in e.Itens.AsQueryable()
-                                   select new
-                                   {
-                                       Estoque =  t.IdEstoque != "" ? (EstoqueDTO)_estoqueService.Get(ObjectId.Parse(t.IdEstoque)) : null,
-                                       Produto = t.IdProduto != "" ? (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)) : null,
-                                       t.Valor,
-                                       t.Quantidade
-                                   }
+                    Pedido = !string.IsNullOrEmpty(e.IdPedido) ? GetPedidoEnumerable(_pedidoService.Get(ObjectId.Parse(e.IdPedido))) : null,
+                    ItensEstoque = e.ItensEstoque != null && e.ItensEstoque.Count > 0 ?
+                        from t in e.ItensEstoque.AsQueryable()
+                        select new
+                        {
+                            Estoque =  t.IdEstoque != "" ? (EstoqueDTO)_estoqueService.Get(ObjectId.Parse(t.IdEstoque)) : null,
+                            t.Valor,
+                            t.Quantidade
+                        } : null,
+                    e.Valor
                 };
         }
+
+        private object GetPedidoEnumerable(PedidoDTO pedido) => new
+        {
+            pedido.Id,
+            pedido.NomeCliente,
+            ListaProduto =
+                        from t in pedido.ListaProduto.AsQueryable()
+                        select new
+                        {
+                            Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
+                            t.Quantidade,
+                            t.PrecoUnidade
+                        },
+            pedido.Historico,
+            pedido.DataCriacao,
+            pedido.DataAtualizacao,
+            pedido.SituacaoPedido,
+            pedido.SituacaoPagamento
+        };
     }
 }

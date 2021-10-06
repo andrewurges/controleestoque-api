@@ -75,7 +75,9 @@ namespace ControleEstoque.Data.Repositories
                 var update = new UpdateDefinitionBuilder<Movimentacao>()
                     .Set(n => n.Tipo, model.Tipo)
                     .Set(n => n.Data, model.Data)
-                    .Set(n => n.Itens, model.Itens);
+                    .Set(n => n.IdPedido, model.IdPedido)
+                    .Set(n => n.ItensEstoque, model.ItensEstoque)
+                    .Set(n => n.Valor, model.Valor);
 
                 var collection = connection.GetCollection();
                 collection.FindOneAndUpdate(filter, update);

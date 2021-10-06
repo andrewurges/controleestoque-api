@@ -28,20 +28,24 @@ namespace ControleEstoque.Api.Controllers
     {
         private IControleEstoqueService<Produto> _produtoService;
         private IControleEstoqueService<Pedido> _pedidoService;
+        private IControleEstoqueService<Movimentacao> _movimentacaoService;
         private readonly ILogger<EstoqueController> _logger;
 
         /// <summary>
         ///     Construtor da Controller
         /// </summary>
         /// <param name="produtoService"></param>
-        /// /// <param name="pedidoService"></param>
+        /// <param name="pedidoService"></param>
+        /// <param name="movimentacaoService"></param>
         /// <param name="logger"></param>
         public DashboardController(ProdutoService produtoService,
             PedidoService pedidoService,
+            MovimentacaoService movimentacaoService,
             ILogger<EstoqueController> logger)
         {
             _produtoService = produtoService;
             _pedidoService = pedidoService;
+            _movimentacaoService = movimentacaoService;
             _logger = logger;
         }
 
@@ -125,6 +129,34 @@ namespace ControleEstoque.Api.Controllers
             }
         }
 
+        /// <summary>
+        ///     Realiza a busca do valor total de movimentações de entrada e saída.
+        /// </summary>
+        /// <returns>Valor total de entrada e saída</returns>
+        [HttpGet("total-movimentacao")]
+        [Produces("application/json")]
+        public IActionResult BuscarTotalMovimentacao()
+        {
+            try
+            {
+                var total = _movimentacaoService.GetAll()
+                    .GroupBy(x => x.Tipo)
+                    .Select(x => new
+                    {
+                        TotalEntrada = x.Where(t => t.Tipo == ETipoMovimentacao.Entrada).Sum(t => t.Valor),
+                        TotalSaida = x.Where(t => t.Tipo == ETipoMovimentacao.Saida).Sum(t => t.Valor)
+                    })
+                    .FirstOrDefault();
+
+                return Ok(total);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"dashboard/total-movimentacao - {e.Message}");
+                return BadRequest(e.Message);
+            }
+        }
+
         private IEnumerable<object> GetPedidoEnumerable(List<PedidoDTO> lst)
         {
             return
@@ -133,13 +165,14 @@ namespace ControleEstoque.Api.Controllers
                 {
                     e.Id,
                     e.NomeCliente,
-                    ListaProduto = from t in e.ListaProduto.AsQueryable()
-                                   select new
-                                   {
-                                       Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
-                                       t.Quantidade,
-                                       t.PrecoUnidade
-                                   },
+                    ListaProduto = 
+                        from t in e.ListaProduto.AsQueryable()
+                        select new
+                        {
+                            Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
+                            t.Quantidade,
+                            t.PrecoUnidade
+                        },
                     e.Historico,
                     e.DataCriacao,
                     e.DataAtualizacao,

@@ -11,7 +11,7 @@ namespace ControleEstoque.Data.Model
     {
         public Movimentacao()
         {
-            Itens = new List<ItemMovimentacao>();
+            ItensEstoque = new List<ItemMovimentacao>();
         }
 
         [BsonId()]
@@ -23,8 +23,14 @@ namespace ControleEstoque.Data.Model
         [BsonElement("data")]
         public string Data { get; set; }
 
-        [BsonElement("itens")]
-        public List<ItemMovimentacao> Itens { get; set; }
+        [BsonElement("id_pedido")]
+        public string IdPedido { get; set; }
+
+        [BsonElement("itens_estoque")]
+        public List<ItemMovimentacao> ItensEstoque { get; set; }
+
+        [BsonElement("valor")]
+        public double Valor { get; set; }
 
         public static implicit operator MovimentacaoDTO(Movimentacao model)
         {
@@ -33,7 +39,9 @@ namespace ControleEstoque.Data.Model
                 Id = model.Id.ToString(),
                 Tipo = model.Tipo,
                 Data = model.Data,
-                Itens = model.Itens.Select<ItemMovimentacao, ItemMovimentacaoDTO>(x => x).ToList()
+                IdPedido = model.IdPedido,
+                ItensEstoque = model.ItensEstoque.Select<ItemMovimentacao, ItemMovimentacaoDTO>(x => x).ToList(),
+                Valor = model.Valor
             };
         }
     }
