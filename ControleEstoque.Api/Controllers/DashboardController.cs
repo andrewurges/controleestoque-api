@@ -139,14 +139,18 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var total = _movimentacaoService.GetAll()
-                    .GroupBy(x => x.Tipo)
+                var total = _movimentacaoService.GetAll().GroupBy(x => x.Tipo)
                     .Select(x => new
                     {
                         TotalEntrada = x.Where(t => t.Tipo == ETipoMovimentacao.Entrada).Sum(t => t.Valor),
                         TotalSaida = x.Where(t => t.Tipo == ETipoMovimentacao.Saida).Sum(t => t.Valor)
                     })
-                    .FirstOrDefault();
+                    .Select(x => new
+                    {
+                        x.TotalEntrada,
+                        x.TotalSaida,
+                        TotalLucroLiquido = x.TotalSaida - x.TotalEntrada
+                    }).FirstOrDefault();
 
                 return Ok(total);
             }
