@@ -15,7 +15,13 @@ namespace ControleEstoque.Data.DTO
         [JsonProperty("data")]
         public string Data { get; set; }
 
-        [JsonProperty("itens")]
-        public List<ItemMovimentacaoDTO> Itens { get; set; }
+        [JsonProperty("idPedido")]
+        public string IdPedido { get; set; }
+
+        [JsonProperty("itensEstoque")]
+        public List<ItemMovimentacaoDTO> ItensEstoque { get; set; }
+
+        [JsonProperty("valor")]
+        public double Valor { get; set; }
     }
 }

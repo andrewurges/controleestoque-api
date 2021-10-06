@@ -2,6 +2,7 @@
 using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
+using ControleEstoque.Data.Enum;
 using ControleEstoque.Data.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,7 @@ namespace ControleEstoque.Api.Controllers
     {
         private IControleEstoqueService<Pedido> _pedidoService;
         private IControleEstoqueService<Produto> _produtoService;
+        private IControleEstoqueService<Movimentacao> _movimentacaoService;
         private readonly ILogger<PedidoController> _logger;
 
         /// <summary>
@@ -33,13 +35,16 @@ namespace ControleEstoque.Api.Controllers
         /// </summary>
         /// <param name="pedidoService"></param>
         /// <param name="produtoService"></param>
+        /// <param name="movimentacaoService"></param>
         /// <param name="logger"></param>
         public PedidoController(PedidoService pedidoService, 
             ProdutoService produtoService,
+            MovimentacaoService movimentacaoService,
             ILogger<PedidoController> logger)
         {
             _pedidoService = pedidoService;
             _produtoService = produtoService;
+            _movimentacaoService = movimentacaoService;
             _logger = logger;
         }
 
@@ -140,6 +145,19 @@ namespace ControleEstoque.Api.Controllers
                     SituacaoPagamento = requestBody.SituacaoPagamento
                 });
 
+                if (novoPedido.SituacaoPagamento == ESituacaoPagamento.Pago)
+                {
+                    var movimentacao = new Movimentacao()
+                    {
+                        Tipo = ETipoMovimentacao.Saida,
+                        Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                        IdPedido = novoPedido.Id,
+                        Valor = novoPedido.ListaProduto.Sum(x => x.PrecoUnidade * x.Quantidade)
+                    };
+
+                    _movimentacaoService.Create(movimentacao);
+                }
+
                 var lst = new List<PedidoDTO>() { novoPedido };
 
                 return Ok(GetPedidoEnumerable(lst).FirstOrDefault());
@@ -169,8 +187,23 @@ namespace ControleEstoque.Api.Controllers
 
                 pedido.NomeCliente = requestBody.NomeCliente;
                 pedido.ListaProduto = requestBody.ListaProduto;
-                pedido.SituacaoPagamento = requestBody.SituacaoPagamento;
                 pedido.SituacaoPedido = requestBody.SituacaoPedido;
+
+                if (pedido.SituacaoPagamento == ESituacaoPagamento.Pendente 
+                    && requestBody.SituacaoPagamento == ESituacaoPagamento.Pago)
+                {
+                    var movimentacao = new Movimentacao()
+                    {
+                        Tipo = ETipoMovimentacao.Saida,
+                        Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                        IdPedido = pedido.Id.ToString(),
+                        Valor = pedido.ListaProduto.Sum(x => x.PrecoUnidade * x.Quantidade)
+                    };
+
+                    _movimentacaoService.Create(movimentacao);
+                }
+
+                pedido.SituacaoPagamento = requestBody.SituacaoPagamento;
 
                 var pedidoAtualizado = (PedidoDTO)_pedidoService.Update(ObjectId.Parse(id), pedido);
                 var lst = new List<PedidoDTO>() { pedidoAtualizado };
@@ -192,13 +225,14 @@ namespace ControleEstoque.Api.Controllers
                 {
                     e.Id,
                     e.NomeCliente,
-                    ListaProduto = from t in e.ListaProduto.AsQueryable()
-                                    select new
-                                    {
-                                        Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
-                                        t.Quantidade,
-                                        t.PrecoUnidade
-                                    },
+                    ListaProduto = 
+                        from t in e.ListaProduto.AsQueryable()
+                        select new
+                        {
+                            Produto = (ProdutoDTO)_produtoService.Get(ObjectId.Parse(t.IdProduto)),
+                            t.Quantidade,
+                            t.PrecoUnidade
+                        },
                     e.Historico,
                     e.DataCriacao,
                     e.DataAtualizacao,

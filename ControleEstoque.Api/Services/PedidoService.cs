@@ -14,6 +14,7 @@ namespace ControleEstoque.Api.Services
     public class PedidoService : IControleEstoqueService<Pedido>
     {
         IControleEstoqueRepository<Pedido> _receitaRepository;
+        IControleEstoqueRepository<Movimentacao> _movimentacaoRepository;
 
         public PedidoService(IControleEstoqueSettings settings)
         {

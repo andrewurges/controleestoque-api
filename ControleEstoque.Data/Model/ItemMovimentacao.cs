@@ -9,9 +9,6 @@ namespace ControleEstoque.Data.Model
         [BsonElement("id_estoque")]
         public string IdEstoque { get; set; }
 
-        [BsonElement("id_produto")]
-        public string IdProduto { get; set; }
-
         [BsonElement("valor")]
         public double Valor { get; set; }
 
@@ -23,7 +20,6 @@ namespace ControleEstoque.Data.Model
             return new ItemMovimentacaoDTO()
             {
                 IdEstoque = model.IdEstoque,
-                IdProduto = model.IdProduto,
                 Valor = model.Valor,
                 Quantidade = model.Quantidade
             };

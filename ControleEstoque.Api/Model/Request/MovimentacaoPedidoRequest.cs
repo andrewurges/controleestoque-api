@@ -1,16 +1,14 @@
 ﻿using ControleEstoque.Data.Enum;
-using ControleEstoque.Data.Model;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace ControleEstoque.Api.Model
 {
-    public class MovimentacaoRequest
+    public class MovimentacaoPedidoRequest
     {
         [JsonProperty("tipo")]
         public ETipoMovimentacao Tipo { get; set; }
 
-        [JsonProperty("itens")]
-        public List<ItemMovimentacao> Itens { get; set; }
+        [JsonProperty("idPedido")]
+        public string IdPedido { get; set; }
     }
 }
