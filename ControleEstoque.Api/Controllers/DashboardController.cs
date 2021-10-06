@@ -94,9 +94,9 @@ namespace ControleEstoque.Api.Controllers
         }
 
         /// <summary>
-        ///     Realiza a busca da quantidade total de pedidos por situação.
+        ///     Realiza a busca da quantidade total de pedidos a fazer.
         /// </summary>
-        /// <returns>Total de pedidos por situação</returns>
+        /// <returns>Total de pedidos a fazer</returns>
         [HttpGet("total-fazer")]
         [Produces("application/json")]
         public IActionResult BuscarTotalAFazer()
