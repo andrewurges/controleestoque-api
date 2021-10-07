@@ -115,15 +115,11 @@ namespace ControleEstoque.Api.Controllers
                     .OrderByDescending(x => DateTime.Parse(x.DataCriacao))
                     .ToList();
 
-                var query = 
-                    from e in lst.AsQueryable()
-                    select new
-                    {
-                        Quantidade = lst.Count(),
-                        Pedidos = GetPedidoEnumerable(lst.Select(s => s).ToList())
-                    };
-
-                return Ok(query.FirstOrDefault());
+                return Ok(new TotalFazerResponse()
+                {
+                    Quantidade = lst.Count,
+                    Pedidos = GetPedidoEnumerable(lst.Select(s => s).ToList())
+                });
             }
             catch (Exception e)
             {
