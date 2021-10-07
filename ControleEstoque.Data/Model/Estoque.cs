@@ -13,9 +13,6 @@ namespace ControleEstoque.Data.Model
         [BsonElement("descricao")]
         public string Descricao { get; set; }
 
-        [BsonElement("preco")]
-        public double Preco { get; set; }
-
         [BsonElement("unidade_medida")]
         public EUnidadeMedida UnidadeMedida { get; set; }
 
@@ -28,7 +25,6 @@ namespace ControleEstoque.Data.Model
             {
                 Id = model.Id.ToString(),
                 Descricao = model.Descricao,
-                Preco = model.Preco,
                 UnidadeMedida = model.UnidadeMedida,
                 QuantidadeDisponivel = model.QuantidadeDisponivel
             };

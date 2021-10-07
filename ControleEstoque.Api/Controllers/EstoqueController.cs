@@ -97,7 +97,6 @@ namespace ControleEstoque.Api.Controllers
                 {
                     Descricao = requestBody.Descricao,
                     QuantidadeDisponivel = requestBody.QuantidadeDisponivel,
-                    Preco = requestBody.Preco,
                     UnidadeMedida = requestBody.UnidadeMedida
                 }));
             }
@@ -125,7 +124,6 @@ namespace ControleEstoque.Api.Controllers
                     throw new Exception($"Estoque com o ID {id} não foi encontrado.");
 
                 estoque.Descricao = requestBody.Descricao;
-                estoque.Preco = requestBody.Preco;
                 estoque.UnidadeMedida = requestBody.UnidadeMedida;
                 estoque.QuantidadeDisponivel = requestBody.QuantidadeDisponivel;
 

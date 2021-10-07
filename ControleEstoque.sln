@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{F926A73A-59E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{5A54A1B5-0E05-4ED9-833B-C083E28E058D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControleEstoque.Data", "ControleEstoque.Data\ControleEstoque.Data.csproj", "{62945D93-A96A-4E73-9A42-91FF2F8AEB71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ControleEstoque.Data", "ControleEstoque.Data\ControleEstoque.Data.csproj", "{62945D93-A96A-4E73-9A42-91FF2F8AEB71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
