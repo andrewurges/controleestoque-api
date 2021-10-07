@@ -130,31 +130,31 @@ namespace ControleEstoque.Api.Controllers
         }
 
         /// <summary>
-        ///     Realiza a busca do valor total de movimentações de entrada e saída.
+        ///     Realiza a busca do valor total de fluxo de caixa.
         /// </summary>
-        /// <returns>Valor total de entrada e saída</returns>
-        [HttpGet("total-movimentacao")]
+        /// <returns>Valor total de caixa</returns>
+        [HttpGet("total-fluxocaixa")]
         [Produces("application/json")]
-        public IActionResult BuscarTotalMovimentacao()
+        public IActionResult BuscarTotalFluxoCaixa()
         {
             try
             {
                 var lst = _movimentacaoService.GetAll();
 
-                var totalEntrada = lst.Where(x => x.Tipo == ETipoMovimentacao.Entrada).Sum(x => x.Valor);
-                var totalSaida= lst.Where(x => x.Tipo == ETipoMovimentacao.Saida).Sum(x => x.Valor);
-                var totalLucroLiquido = totalSaida - totalEntrada;
+                var totalDespesas= lst.Where(x => x.Tipo == ETipoMovimentacao.Despesa).Sum(x => x.Valor);
+                var totalReceitas = lst.Where(x => x.Tipo == ETipoMovimentacao.Receita).Sum(x => x.Valor);
+                var totalSaldo = totalReceitas - totalDespesas;
 
-                return Ok(new TotalMovimentacaoResponse()
+                return Ok(new TotalFluxoCaixaResponse()
                 {
-                    TotalEntrada = totalEntrada,
-                    TotalSaida = totalSaida,
-                    TotalLucroLiquido = totalLucroLiquido
+                    TotalDespesas = totalDespesas,
+                    TotalReceitas = totalReceitas,
+                    TotalSaldo = totalSaldo
                 });
             }
             catch (Exception e)
             {
-                _logger.LogError($"dashboard/total-movimentacao - {e.Message}");
+                _logger.LogError($"dashboard/total-fluxocaixa - {e.Message}");
                 return BadRequest(e.Message);
             }
         }

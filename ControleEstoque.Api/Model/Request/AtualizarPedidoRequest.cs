@@ -7,9 +7,6 @@ namespace ControleEstoque.Api.Model
 {
     public class AtualizarPedidoRequest
     {
-        [JsonProperty("nomeCliente")]
-        public string NomeCliente { get; set; }
-
         [JsonProperty("listaProduto")]
         public List<ItemPedido> ListaProduto { get; set; }
 

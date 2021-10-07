@@ -10,18 +10,18 @@ using System.Linq.Expressions;
 
 namespace ControleEstoque.Data.Repositories
 {
-    public class PedidoRepository : IControleEstoqueRepository<Pedido>
+    public class ClienteRepository : IControleEstoqueRepository<Cliente>
     {
-        public static string collectionName = "Pedido";
+        public static string collectionName = "Cliente";
 
-        MongoConnection<Pedido> connection;
+        MongoConnection<Cliente> connection;
 
-        public PedidoRepository(string connectionString, string databaseName)
+        public ClienteRepository(string connectionString, string databaseName)
         {
-            connection = new MongoConnection<Pedido>(connectionString, databaseName, collectionName);
+            connection = new MongoConnection<Cliente>(connectionString, databaseName, collectionName);
         }
 
-        public Pedido Get(ObjectId id)
+        public Cliente Get(ObjectId id)
         {
             try
             {
@@ -29,11 +29,11 @@ namespace ControleEstoque.Data.Repositories
             }
             catch (MongoConnectionException)
             {
-                return new Pedido();
+                return new Cliente();
             }
         }
 
-        public List<Pedido> GetAll(Expression<Func<Pedido, bool>> where = null)
+        public List<Cliente> GetAll(Expression<Func<Cliente, bool>> where = null)
         {
             try
             {
@@ -43,16 +43,16 @@ namespace ControleEstoque.Data.Repositories
                 }
                 else
                 {
-                    return connection.GetCollection().Find<Pedido>(where).ToList();
+                    return connection.GetCollection().Find<Cliente>(where).ToList();
                 }
             }
             catch (MongoConnectionException)
             {
-                return new List<Pedido>();
+                return new List<Cliente>();
             }
         }
 
-        public Pedido Create(Pedido model)
+        public Cliente Create(Cliente model)
         {
             try
             {
@@ -67,19 +67,15 @@ namespace ControleEstoque.Data.Repositories
             }
         }
 
-        public Pedido Update(ObjectId id, Pedido model)
+        public Cliente Update(ObjectId id, Cliente model)
         {
             try
             {
-                Expression<Func<Pedido, bool>> filter = x => x.Id.Equals(id);
-                var update = new UpdateDefinitionBuilder<Pedido>()
-                    .Set(n => n.IdCliente, model.IdCliente)
-                    .Set(n => n.ListaProduto, model.ListaProduto)
-                    .Set(n => n.Historico, model.Historico)
-                    .Set(n => n.DataCriacao, model.DataCriacao)
-                    .Set(n => n.DataAtualizacao, model.DataAtualizacao)
-                    .Set(n => n.SituacaoPedido, model.SituacaoPedido)
-                    .Set(n => n.SituacaoPagamento, model.SituacaoPagamento);
+                Expression<Func<Cliente, bool>> filter = x => x.Id.Equals(id);
+                var update = new UpdateDefinitionBuilder<Cliente>()
+                    .Set(n => n.NomeCompleto, model.NomeCompleto)
+                    .Set(n => n.Telefone, model.Telefone)
+                    .Set(n => n.Email, model.Email);
 
                 var collection = connection.GetCollection();
                 collection.FindOneAndUpdate(filter, update);
@@ -92,11 +88,11 @@ namespace ControleEstoque.Data.Repositories
             }
         }
 
-        public Pedido Delete(ObjectId id)
+        public Cliente Delete(ObjectId id)
         {
             try
             {
-                Expression<Func<Pedido, bool>> filter = x => x.Id.Equals(id);
+                Expression<Func<Cliente, bool>> filter = x => x.Id.Equals(id);
 
                 return connection.GetCollection().FindOneAndDelete(filter);
             }

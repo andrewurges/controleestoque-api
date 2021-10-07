@@ -4,7 +4,7 @@ namespace ControleEstoque.Data.Enum
 {
     public enum ETipoMovimentacao
     {
-        [Description("Entrada")] Entrada = 0,
-        [Description("Saída")] Saida = 1
+        [Description("Despesa")] Despesa = 0,
+        [Description("Receita")] Receita = 1
     }
 }

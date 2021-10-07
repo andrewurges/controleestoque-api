@@ -28,6 +28,7 @@ namespace ControleEstoque.Api.Controllers
         private IControleEstoqueService<Pedido> _pedidoService;
         private IControleEstoqueService<Produto> _produtoService;
         private IControleEstoqueService<Movimentacao> _movimentacaoService;
+        private IControleEstoqueService<Cliente> _clienteService;
         private readonly ILogger<PedidoController> _logger;
 
         /// <summary>
@@ -36,15 +37,18 @@ namespace ControleEstoque.Api.Controllers
         /// <param name="pedidoService"></param>
         /// <param name="produtoService"></param>
         /// <param name="movimentacaoService"></param>
+        /// <param name="clienteService"></param>
         /// <param name="logger"></param>
         public PedidoController(PedidoService pedidoService, 
             ProdutoService produtoService,
             MovimentacaoService movimentacaoService,
+            ClienteService clienteService,
             ILogger<PedidoController> logger)
         {
             _pedidoService = pedidoService;
             _produtoService = produtoService;
             _movimentacaoService = movimentacaoService;
+            _clienteService = clienteService;
             _logger = logger;
         }
 
@@ -140,7 +144,7 @@ namespace ControleEstoque.Api.Controllers
             {
                 var novoPedido = (PedidoDTO)_pedidoService.Create(new Pedido()
                 {
-                    NomeCliente = requestBody.NomeCliente,
+                    IdCliente = requestBody.IdCliente,
                     ListaProduto = requestBody.ListaProduto,
                     SituacaoPagamento = requestBody.SituacaoPagamento
                 });
@@ -149,7 +153,7 @@ namespace ControleEstoque.Api.Controllers
                 {
                     var movimentacao = new Movimentacao()
                     {
-                        Tipo = ETipoMovimentacao.Saida,
+                        Tipo = ETipoMovimentacao.Receita,
                         Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
                         IdPedido = novoPedido.Id,
                         Valor = novoPedido.ListaProduto.Sum(x => x.PrecoUnidade * x.Quantidade)
@@ -185,7 +189,6 @@ namespace ControleEstoque.Api.Controllers
                 if (pedido == null)
                     throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                pedido.NomeCliente = requestBody.NomeCliente;
                 pedido.ListaProduto = requestBody.ListaProduto;
                 pedido.SituacaoPedido = requestBody.SituacaoPedido;
 
@@ -194,7 +197,7 @@ namespace ControleEstoque.Api.Controllers
                 {
                     var movimentacao = new Movimentacao()
                     {
-                        Tipo = ETipoMovimentacao.Saida,
+                        Tipo = ETipoMovimentacao.Receita,
                         Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
                         IdPedido = pedido.Id.ToString(),
                         Valor = pedido.ListaProduto.Sum(x => x.PrecoUnidade * x.Quantidade)
@@ -224,7 +227,7 @@ namespace ControleEstoque.Api.Controllers
                 select new
                 {
                     e.Id,
-                    e.NomeCliente,
+                    Cliente = (ClienteDTO)_clienteService.Get(ObjectId.Parse(e.IdCliente)),
                     ListaProduto = 
                         from t in e.ListaProduto.AsQueryable()
                         select new

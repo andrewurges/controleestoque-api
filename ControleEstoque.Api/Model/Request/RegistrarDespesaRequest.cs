@@ -5,11 +5,8 @@ using System.Collections.Generic;
 
 namespace ControleEstoque.Api.Model
 {
-    public class MovimentacaoEstoqueRequest
+    public class RegistrarDespesaRequest
     {
-        [JsonProperty("tipo")]
-        public ETipoMovimentacao Tipo { get; set; }
-
         [JsonProperty("itensEstoque")]
         public List<ItemMovimentacao> ItensEstoque { get; set; }
     }
