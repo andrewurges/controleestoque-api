@@ -7,8 +7,8 @@ namespace ControleEstoque.Api.Model
 {
     public class CriarPedidoRequest
     {
-        [JsonProperty("nomeCliente")]
-        public string NomeCliente { get; set; }
+        [JsonProperty("idCliente")]
+        public string IdCliente { get; set; }
 
         [JsonProperty("listaProduto")]
         public List<ItemPedido> ListaProduto { get; set; }

@@ -9,8 +9,8 @@ namespace ControleEstoque.Data.DTO
         [JsonProperty("id")]
         public string Id { get; set; }
 
-        [JsonProperty("nomeCliente")]
-        public string NomeCliente { get; set; }
+        [JsonProperty("idCliente")]
+        public string IdCliente { get; set; }
 
         [JsonProperty("listaProduto")]
         public List<ItemPedidoDTO> ListaProduto { get; set; }

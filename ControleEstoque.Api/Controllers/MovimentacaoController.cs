@@ -2,6 +2,7 @@
 using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
+using ControleEstoque.Data.Enum;
 using ControleEstoque.Data.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -74,19 +75,19 @@ namespace ControleEstoque.Api.Controllers
         }
 
         /// <summary>
-        ///     Realiza a movimentação de um pedido.
+        ///     Realiza o registro de uma receita no fluxo de caixa.
         /// </summary>
-        /// <param name="requestBody">Objeto com os dados da movimentação do pedido</param>
+        /// <param name="requestBody">Objeto com os dados da receita</param>
         /// <returns>Objeto criado</returns>
-        [HttpPost("movimentar-pedido")]
+        [HttpPost("registrar-receita")]
         [Produces("application/json")]
-        public IActionResult MovimentarPedido([FromBody] MovimentacaoPedidoRequest requestBody)
+        public IActionResult RegistrarReceita([FromBody] RegistrarReceitaRequest requestBody)
         {
             try
             {
                 var novaMovimentacao = (MovimentacaoDTO)_movimentacaoService.Create(new Movimentacao()
                 {
-                    Tipo = requestBody.Tipo,
+                    Tipo = ETipoMovimentacao.Receita,
                     Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
                     IdPedido = requestBody.IdPedido
                 });
@@ -97,25 +98,25 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"movimentacao/criar - {e.Message}");
+                _logger.LogError($"movimentacao/registrar-receita - {e.Message}");
                 return BadRequest(e.Message);
             }
         }
 
         /// <summary>
-        ///     Realiza a movimentação de itens de estoque.
+        ///     Realiza o registro de uma despesa fluxo de caixa.
         /// </summary>
-        /// <param name="requestBody">Objeto com os dados da movimentação do estoque</param>
+        /// <param name="requestBody">Objeto com os dados da despesa</param>
         /// <returns>Objeto criado</returns>
-        [HttpPost("movimentar-estoque")]
+        [HttpPost("registrar-despesa")]
         [Produces("application/json")]
-        public IActionResult MovimentarEstoque([FromBody] MovimentacaoEstoqueRequest requestBody)
+        public IActionResult RegistrarDespesa([FromBody] RegistrarDespesaRequest requestBody)
         {
             try
             {
                 var novaMovimentacao = (MovimentacaoDTO)_movimentacaoService.Create(new Movimentacao()
                 {
-                    Tipo = requestBody.Tipo,
+                    Tipo = ETipoMovimentacao.Despesa,
                     Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
                     ItensEstoque = requestBody.ItensEstoque
                 });
@@ -126,7 +127,7 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"movimentacao/criar - {e.Message}");
+                _logger.LogError($"movimentacao/registrar-despesa - {e.Message}");
                 return BadRequest(e.Message);
             }
         }

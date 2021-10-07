@@ -18,8 +18,8 @@ namespace ControleEstoque.Data.Model
         [BsonId()]
         public ObjectId Id { get; set; }
 
-        [BsonElement("nome_cliente")]
-        public string NomeCliente { get; set; }
+        [BsonElement("id_cliente")]
+        public string IdCliente { get; set; }
 
         [BsonElement("lista_produto")]
         public List<ItemPedido> ListaProduto { get; set; }
@@ -44,7 +44,7 @@ namespace ControleEstoque.Data.Model
             return new PedidoDTO()
             {
                 Id = model.Id.ToString(),
-                NomeCliente = model.NomeCliente,
+                IdCliente = model.IdCliente,
                 ListaProduto = model.ListaProduto.Select<ItemPedido, ItemPedidoDTO>(x => x).ToList(),
                 Historico = model.Historico.Select<HistoricoPedido, HistoricoPedidoDTO>(x => x).ToList(),
                 DataCriacao = model.DataCriacao,
