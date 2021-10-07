@@ -74,7 +74,6 @@ namespace ControleEstoque.Data.Repositories
                 Expression<Func<Estoque, bool>> filter = x => x.Id.Equals(id);
                 var update = new UpdateDefinitionBuilder<Estoque>()
                     .Set(n => n.Descricao, model.Descricao)
-                    .Set(n => n.Preco, model.Preco)
                     .Set(n => n.UnidadeMedida, model.UnidadeMedida)
                     .Set(n => n.QuantidadeDisponivel, model.QuantidadeDisponivel);
 

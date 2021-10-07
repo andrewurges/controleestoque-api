@@ -1,6 +1,4 @@
 ﻿using ControleEstoque.Data.Enum;
-using ControleEstoque.Data.Model;
-using MongoDB.Bson;
 using Newtonsoft.Json;
 
 namespace ControleEstoque.Data.DTO
@@ -12,9 +10,6 @@ namespace ControleEstoque.Data.DTO
 
         [JsonProperty("descricao")]
         public string Descricao { get; set; }
-
-        [JsonProperty("preco")]
-        public double Preco { get; set; }
 
         [JsonProperty("unidadeMedida")]
         public EUnidadeMedida UnidadeMedida { get; set; }
