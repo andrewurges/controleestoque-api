@@ -66,6 +66,7 @@ namespace ControleEstoque.Api.Controllers
 
                 return Ok(new TotalEstoqueResponse()
                 {
+                    Quantidade = lst.Sum(x => x.QuantidadeDisponivel),
                     Total = lst.Sum(x => x.Preco * x.QuantidadeDisponivel),
                     Produtos = lst
                 });
