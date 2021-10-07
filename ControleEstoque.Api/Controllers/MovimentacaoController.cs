@@ -28,6 +28,7 @@ namespace ControleEstoque.Api.Controllers
         private IControleEstoqueService<Estoque> _estoqueService;
         private IControleEstoqueService<Produto> _produtoService;
         private IControleEstoqueService<Pedido> _pedidoService;
+        private IControleEstoqueService<Cliente> _clienteService;
         private readonly ILogger<MovimentacaoController> _logger;
 
         /// <summary>
@@ -37,17 +38,20 @@ namespace ControleEstoque.Api.Controllers
         /// <param name="estoqueService"></param>
         /// <param name="pedidoService"></param>
         /// <param name="produtoService"></param>
+        /// <param name="clienteService"></param>
         /// <param name="logger"></param>
         public MovimentacaoController(MovimentacaoService movimentacaoService, 
             EstoqueService estoqueService,
             PedidoService pedidoService,
             ProdutoService produtoService,
+            ClienteService clienteService,
             ILogger<MovimentacaoController> logger)
         {
             _movimentacaoService = movimentacaoService;
             _estoqueService = estoqueService;
             _pedidoService = pedidoService;
             _produtoService = produtoService;
+            _clienteService = clienteService;
             _logger = logger;
         }
 
@@ -157,7 +161,7 @@ namespace ControleEstoque.Api.Controllers
         private object GetPedidoEnumerable(PedidoDTO pedido) => new
         {
             pedido.Id,
-            pedido.NomeCliente,
+            Cliente = (ClienteDTO)_clienteService.Get(ObjectId.Parse(pedido.IdCliente)),
             ListaProduto =
                         from t in pedido.ListaProduto.AsQueryable()
                         select new

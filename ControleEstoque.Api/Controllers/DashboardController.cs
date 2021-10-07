@@ -1,5 +1,4 @@
 ﻿using ControleEstoque.Api.Interface;
-using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Model.Response;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
@@ -29,6 +28,7 @@ namespace ControleEstoque.Api.Controllers
         private IControleEstoqueService<Produto> _produtoService;
         private IControleEstoqueService<Pedido> _pedidoService;
         private IControleEstoqueService<Movimentacao> _movimentacaoService;
+        private IControleEstoqueService<Cliente> _clienteService;
         private readonly ILogger<EstoqueController> _logger;
 
         /// <summary>
@@ -37,15 +37,18 @@ namespace ControleEstoque.Api.Controllers
         /// <param name="produtoService"></param>
         /// <param name="pedidoService"></param>
         /// <param name="movimentacaoService"></param>
+        /// <param name="clienteService"></param>
         /// <param name="logger"></param>
         public DashboardController(ProdutoService produtoService,
             PedidoService pedidoService,
             MovimentacaoService movimentacaoService,
+            ClienteService clienteService,
             ILogger<EstoqueController> logger)
         {
             _produtoService = produtoService;
             _pedidoService = pedidoService;
             _movimentacaoService = movimentacaoService;
+            _clienteService = clienteService;
             _logger = logger;
         }
 
@@ -166,7 +169,7 @@ namespace ControleEstoque.Api.Controllers
                 select new
                 {
                     e.Id,
-                    e.NomeCliente,
+                    Cliente = (ClienteDTO)_clienteService.Get(ObjectId.Parse(e.IdCliente)),
                     ListaProduto = 
                         from t in e.ListaProduto.AsQueryable()
                         select new
