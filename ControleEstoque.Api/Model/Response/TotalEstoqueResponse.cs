@@ -6,6 +6,9 @@ namespace ControleEstoque.Api.Model.Response
 {
     public class TotalEstoqueResponse
     {
+        [JsonProperty("quantidade")]
+        public double Quantidade { get; set; }
+
         [JsonProperty("total")]
         public double Total { get; set; }
 
