@@ -70,11 +70,11 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var consumo = _clienteService.Get(ObjectId.Parse(id));
-                if (consumo == null)
+                var cliente = _clienteService.Get(ObjectId.Parse(id));
+                if (cliente == null)
                     throw new Exception($"Cliente com o ID {id} não foi encontrado.");
 
-                return Ok((ClienteDTO)consumo);
+                return Ok((ClienteDTO)cliente);
             }
             catch (Exception e)
             {
