@@ -13,7 +13,7 @@ namespace ControleEstoque.Data.Model
         public string NomeCompleto { get; set; }
 
         [BsonElement("telefone")]
-        public int Telefone { get; set; }
+        public string Telefone { get; set; }
 
         [BsonElement("email")]
         public string Email { get; set; }
