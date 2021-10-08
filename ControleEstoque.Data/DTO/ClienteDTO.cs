@@ -11,7 +11,7 @@ namespace ControleEstoque.Data.DTO
         public string NomeCompleto { get; set; }
 
         [JsonProperty("telefone")]
-        public string Telefone { get; set; }
+        public int Telefone { get; set; }
 
         [JsonProperty("email")]
         public string Email { get; set; }
