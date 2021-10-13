@@ -11,7 +11,6 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace ControleEstoque.Api.Controllers
@@ -67,7 +66,7 @@ namespace ControleEstoque.Api.Controllers
             try
             {
                 List<MovimentacaoDTO> lst = _movimentacaoService.GetAll().Select(x => (MovimentacaoDTO)x)
-                    .OrderByDescending(x => DateTime.ParseExact(x.Data, "dd/MM/yyyy", CultureInfo.InvariantCulture))
+                    .OrderByDescending(x => DateTime.Parse(x.Data))
                     .ToList();
 
                 return Ok(GetMovimentacaoEnumerable(lst));
