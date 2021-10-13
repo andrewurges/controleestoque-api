@@ -79,7 +79,8 @@ namespace ControleEstoque.Data.Repositories
                     .Set(n => n.DataCriacao, model.DataCriacao)
                     .Set(n => n.DataAtualizacao, model.DataAtualizacao)
                     .Set(n => n.SituacaoPedido, model.SituacaoPedido)
-                    .Set(n => n.SituacaoPagamento, model.SituacaoPagamento);
+                    .Set(n => n.SituacaoPagamento, model.SituacaoPagamento)
+                    .Set(n => n.Desconto, model.Desconto);
 
                 var collection = connection.GetCollection();
                 collection.FindOneAndUpdate(filter, update);

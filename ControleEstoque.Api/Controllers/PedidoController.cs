@@ -12,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace ControleEstoque.Api.Controllers
@@ -147,8 +146,12 @@ namespace ControleEstoque.Api.Controllers
                 {
                     IdCliente = requestBody.IdCliente,
                     ListaProduto = requestBody.ListaProduto,
-                    SituacaoPagamento = requestBody.SituacaoPagamento
+                    SituacaoPagamento = requestBody.SituacaoPagamento,
                 });
+
+                novoPedido.Desconto.Possui = requestBody.PossuiDesconto;
+                novoPedido.Desconto.Tipo = requestBody.TipoDesconto;
+                novoPedido.Desconto.Valor = requestBody.ValorDesconto;
 
                 if (novoPedido.SituacaoPagamento == ESituacaoPagamento.Pago)
                 {
@@ -190,7 +193,6 @@ namespace ControleEstoque.Api.Controllers
                 if (pedido == null)
                     throw new Exception($"Pedido com o ID {id} não foi encontrado.");
 
-                pedido.ListaProduto = requestBody.ListaProduto;
                 pedido.SituacaoPedido = requestBody.SituacaoPedido;
 
                 if (pedido.SituacaoPagamento == ESituacaoPagamento.Pendente 
@@ -241,7 +243,9 @@ namespace ControleEstoque.Api.Controllers
                     e.DataCriacao,
                     e.DataAtualizacao,
                     e.SituacaoPedido,
-                    e.SituacaoPagamento
+                    e.SituacaoPagamento,
+                    e.Desconto,
+                    e.Total
                 };
         }
     }

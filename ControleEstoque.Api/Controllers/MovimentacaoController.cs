@@ -176,7 +176,9 @@ namespace ControleEstoque.Api.Controllers
             pedido.DataCriacao,
             pedido.DataAtualizacao,
             pedido.SituacaoPedido,
-            pedido.SituacaoPagamento
+            pedido.SituacaoPagamento,
+            pedido.Desconto,
+            pedido.Total
         };
     }
 }
