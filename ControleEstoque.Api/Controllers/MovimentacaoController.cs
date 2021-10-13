@@ -1,4 +1,5 @@
-﻿using ControleEstoque.Api.Interface;
+﻿using ControleEstoque.Api.Helpers;
+using ControleEstoque.Api.Interface;
 using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace ControleEstoque.Api.Controllers
@@ -66,7 +68,7 @@ namespace ControleEstoque.Api.Controllers
             try
             {
                 List<MovimentacaoDTO> lst = _movimentacaoService.GetAll().Select(x => (MovimentacaoDTO)x)
-                    .OrderByDescending(x => DateTime.Parse(x.Data))
+                    .OrderByDescending(x => DateHelper.GetDateUTC(x.Data))
                     .ToList();
 
                 return Ok(GetMovimentacaoEnumerable(lst));
