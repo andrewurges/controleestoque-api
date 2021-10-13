@@ -1,4 +1,5 @@
-﻿using ControleEstoque.Api.Interface;
+﻿using ControleEstoque.Api.Helpers;
+using ControleEstoque.Api.Interface;
 using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;
@@ -63,7 +64,7 @@ namespace ControleEstoque.Api.Controllers
             try
             {
                 List<PedidoDTO> lst = _pedidoService.GetAll().Select(x => (PedidoDTO)x)
-                    .OrderByDescending(x => DateTime.ParseExact(x.DataCriacao, "dd/MM/yyyy", CultureInfo.InvariantCulture))
+                    .OrderByDescending(x => DateHelper.GetDateUTC(x.DataCriacao))
                     .ToList();
 
                 return Ok(GetPedidoEnumerable(lst));
@@ -86,7 +87,7 @@ namespace ControleEstoque.Api.Controllers
             try
             {
                 var agrupado = _pedidoService.GetAll().Select(x => (PedidoDTO)x)
-                    .OrderByDescending(x => DateTime.ParseExact(x.DataCriacao, "dd/MM/yyyy", CultureInfo.InvariantCulture))
+                    .OrderByDescending(x => DateHelper.GetDateUTC(x.DataCriacao))
                     .GroupBy(x => x.DataCriacao)
                     .ToList();
 
