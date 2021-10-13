@@ -48,6 +48,27 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
+                List<ClienteDTO> lst = _clienteService.GetAll().Select(x => (ClienteDTO)x).ToList();
+
+                return Ok(lst);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"cliente/listar - {e.Message}");
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        ///     Realiza a busca de todos os clientes agrupado por letar inicial.
+        /// </summary>
+        /// <returns>Lista de clientes agrupado</returns>
+        [HttpGet("listar-agrupado")]
+        [Produces("application/json")]
+        public IActionResult ListarAgrupado()
+        {
+            try
+            {
                 var agrupado = _clienteService.GetAll().Select(x => (ClienteDTO)x)
                     .OrderBy(x => x.NomeCompleto)
                     .GroupBy(x => x.NomeCompleto[0])
@@ -60,16 +81,10 @@ namespace ControleEstoque.Api.Controllers
                 });
 
                 return Ok(lst);
-
-                /*
-                List<ClienteDTO> lst = _clienteService.GetAll().Select(x => (ClienteDTO)x).ToList();
-
-                return Ok(lst);
-                */
             }
             catch (Exception e)
             {
-                _logger.LogError($"cliente/listar - {e.Message}");
+                _logger.LogError($"cliente/listar-agrupado - {e.Message}");
                 return BadRequest(e.Message);
             }
         }
