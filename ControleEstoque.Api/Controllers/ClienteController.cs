@@ -48,7 +48,9 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                List<ClienteDTO> lst = _clienteService.GetAll().Select(x => (ClienteDTO)x).ToList();
+                List<ClienteDTO> lst = _clienteService.GetAll()
+                    .OrderBy(x => x.NomeCompleto)
+                    .Select(x => (ClienteDTO)x).ToList();
 
                 return Ok(lst);
             }
