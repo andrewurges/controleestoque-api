@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 
@@ -113,7 +114,7 @@ namespace ControleEstoque.Api.Controllers
             {
                 List<PedidoDTO> lst = _pedidoService.GetAll(x => x.SituacaoPedido == ESituacaoPedido.AFazer)
                     .Select(x => (PedidoDTO)x)
-                    .OrderByDescending(x => DateTime.Parse(x.DataCriacao))
+                    .OrderByDescending(x => DateTime.ParseExact(x.DataCriacao, "dd/MM/yyyy", CultureInfo.InvariantCulture))
                     .ToList();
 
                 return Ok(new TotalFazerResponse()

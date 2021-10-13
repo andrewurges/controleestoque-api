@@ -63,7 +63,7 @@ namespace ControleEstoque.Api.Controllers
             try
             {
                 List<PedidoDTO> lst = _pedidoService.GetAll().Select(x => (PedidoDTO)x)
-                    .OrderByDescending(x => DateTime.Parse(x.DataCriacao))
+                    .OrderByDescending(x => DateTime.ParseExact(x.DataCriacao, "dd/MM/yyyy", CultureInfo.InvariantCulture))
                     .ToList();
 
                 return Ok(GetPedidoEnumerable(lst));
@@ -100,7 +100,7 @@ namespace ControleEstoque.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"pedido/listar - {e.Message}");
+                _logger.LogError($"pedido/listar-agrupado - {e.Message}");
                 return BadRequest(e.Message);
             }
         }

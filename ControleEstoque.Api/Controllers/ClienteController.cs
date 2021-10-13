@@ -48,9 +48,24 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
+                var agrupado = _clienteService.GetAll().Select(x => (ClienteDTO)x)
+                    .OrderBy(x => x.NomeCompleto)
+                    .GroupBy(x => x.NomeCompleto[0])
+                    .ToList();
+
+                var lst = agrupado.Select(x => new
+                {
+                    Letra = x.Key,
+                    Clientes = x.Select(s => s).ToList()
+                });
+
+                return Ok(lst);
+
+                /*
                 List<ClienteDTO> lst = _clienteService.GetAll().Select(x => (ClienteDTO)x).ToList();
 
                 return Ok(lst);
+                */
             }
             catch (Exception e)
             {
