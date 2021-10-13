@@ -29,5 +29,11 @@ namespace ControleEstoque.Data.DTO
 
         [JsonProperty("situacaoPagamento")]
         public ESituacaoPagamento SituacaoPagamento { get; set; }
+
+        [JsonProperty("desconto")]
+        public DescontoDTO Desconto { get; set; }
+
+        [JsonProperty("total")]
+        public double Total { get; set; }
     }
 }

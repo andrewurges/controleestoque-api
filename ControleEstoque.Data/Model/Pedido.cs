@@ -13,6 +13,7 @@ namespace ControleEstoque.Data.Model
         {
             ListaProduto = new List<ItemPedido>();
             Historico = new List<HistoricoPedido>();
+            Desconto = new Desconto();
         }
 
         [BsonId()]
@@ -39,6 +40,31 @@ namespace ControleEstoque.Data.Model
         [BsonElement("situacao_pagamento")]
         public ESituacaoPagamento SituacaoPagamento { get; set; }
 
+        [BsonElement("desconto")]
+        public Desconto Desconto { get; set; }
+
+        public double RetornarTotal()
+        {
+            var total = ListaProduto.Sum(x => x.RetornarTotal());
+
+            if (Desconto.Possui)
+            {
+                switch (Desconto.Tipo)
+                {
+                    case ETipoDesconto.Valor:
+                        total -= Desconto.Valor;
+                        break;
+                    case ETipoDesconto.Percentual:
+                        total -= total * (Desconto.Valor / 100);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return total;
+        }
+
         public static implicit operator PedidoDTO(Pedido model)
         {
             return new PedidoDTO()
@@ -50,7 +76,9 @@ namespace ControleEstoque.Data.Model
                 DataCriacao = model.DataCriacao,
                 DataAtualizacao = model.DataAtualizacao,
                 SituacaoPedido = model.SituacaoPedido,
-                SituacaoPagamento = model.SituacaoPagamento
+                SituacaoPagamento = model.SituacaoPagamento,
+                Desconto = model.Desconto,
+                Total = model.RetornarTotal()
             };
         }
     }

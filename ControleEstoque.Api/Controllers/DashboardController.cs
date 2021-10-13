@@ -92,7 +92,7 @@ namespace ControleEstoque.Api.Controllers
                 return Ok(new TotalReceberResponse()
                 {
                     Total = _pedidoService.GetAll(x => x.SituacaoPagamento == ESituacaoPagamento.Pendente)
-                        .Sum(x => x.ListaProduto.Sum(t => t.Quantidade * t.PrecoUnidade))
+                        .Sum(x => x.RetornarTotal())
                 });
             }
             catch (Exception e)
@@ -180,7 +180,9 @@ namespace ControleEstoque.Api.Controllers
                     e.DataCriacao,
                     e.DataAtualizacao,
                     e.SituacaoPedido,
-                    e.SituacaoPagamento
+                    e.SituacaoPagamento,
+                    e.Desconto,
+                    e.Total
                 };
         }
     }

@@ -14,6 +14,11 @@ namespace ControleEstoque.Data.Model
         [BsonElement("preco_unidade")]
         public double PrecoUnidade { get; set; }
 
+        public double RetornarTotal()
+        {
+            return Quantidade * PrecoUnidade;
+        }
+
         public static implicit operator ItemPedidoDTO(ItemPedido model)
         {
             return new ItemPedidoDTO()
