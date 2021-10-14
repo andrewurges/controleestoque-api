@@ -16,9 +16,6 @@ namespace ControleEstoque.Api.Model
         [JsonProperty("situacaoPagamento")]
         public ESituacaoPagamento SituacaoPagamento { get; set; }
 
-        [JsonProperty("possuiDesconto")]
-        public bool PossuiDesconto { get; set; }
-
         [JsonProperty("tipoDesconto")]
         public ETipoDesconto TipoDesconto { get; set; }
 

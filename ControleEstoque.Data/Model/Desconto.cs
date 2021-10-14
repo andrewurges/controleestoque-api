@@ -6,9 +6,6 @@ namespace ControleEstoque.Data.Model
 {
     public class Desconto
     {
-        [BsonElement("possui")]
-        public bool Possui { get; set; }
-
         [BsonElement("tipo")]
         public ETipoDesconto Tipo { get; set; }
 
@@ -19,7 +16,6 @@ namespace ControleEstoque.Data.Model
         {
             return new DescontoDTO()
             {
-                Possui = model.Possui,
                 Tipo = model.Tipo,
                 Valor = model.Valor
             };

@@ -75,7 +75,8 @@ namespace ControleEstoque.Data.Repositories
                 var update = new UpdateDefinitionBuilder<Cliente>()
                     .Set(n => n.NomeCompleto, model.NomeCompleto)
                     .Set(n => n.Telefone, model.Telefone)
-                    .Set(n => n.Email, model.Email);
+                    .Set(n => n.Email, model.Email)
+                    .Set(n => n.DescontoPadrao, model.DescontoPadrao);
 
                 var collection = connection.GetCollection();
                 collection.FindOneAndUpdate(filter, update);

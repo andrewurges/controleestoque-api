@@ -47,11 +47,11 @@ namespace ControleEstoque.Data.Model
         {
             var total = ListaProduto.Sum(x => x.RetornarTotal());
 
-            if (Desconto.Possui)
+            if (Desconto.Tipo != ETipoDesconto.Nenhum)
             {
                 switch (Desconto.Tipo)
                 {
-                    case ETipoDesconto.Valor:
+                    case ETipoDesconto.Real:
                         total -= Desconto.Valor;
                         break;
                     case ETipoDesconto.Percentual:
