@@ -126,20 +126,17 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var novoCliente = (ClienteDTO)_clienteService.Create(new Cliente()
+                var novoCliente = new Cliente()
                 {
                     NomeCompleto = requestBody.NomeCompleto,
                     Telefone = requestBody.Telefone,
                     Email = requestBody.Email
-                });
-
-                if (novoCliente.DescontoPadrao == null)
-                    novoCliente.DescontoPadrao = new Desconto();
+                };
 
                 novoCliente.DescontoPadrao.Tipo = requestBody.TipoDescontoPadrao;
                 novoCliente.DescontoPadrao.Valor = requestBody.ValorDescontoPadrao;
 
-                return Ok(novoCliente);
+                return Ok((ClienteDTO)_clienteService.Create(novoCliente));
             }
             catch (Exception e)
             {

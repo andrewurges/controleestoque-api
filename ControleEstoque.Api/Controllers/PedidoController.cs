@@ -142,18 +142,17 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                var novoPedido = (PedidoDTO)_pedidoService.Create(new Pedido()
+                var request = new Pedido()
                 {
                     IdCliente = requestBody.IdCliente,
                     ListaProduto = requestBody.ListaProduto,
                     SituacaoPagamento = requestBody.SituacaoPagamento,
-                });
+                };
 
-                if (novoPedido.Desconto == null)
-                    novoPedido.Desconto = new Desconto();
+                request.Desconto.Tipo = requestBody.TipoDesconto;
+                request.Desconto.Valor = requestBody.ValorDesconto;
 
-                novoPedido.Desconto.Tipo = requestBody.TipoDesconto;
-                novoPedido.Desconto.Valor = requestBody.ValorDesconto;
+                var novoPedido = _pedidoService.Create(request);
 
                 if (novoPedido.SituacaoPagamento == ESituacaoPagamento.Pago)
                 {
@@ -161,7 +160,7 @@ namespace ControleEstoque.Api.Controllers
                     {
                         Tipo = ETipoMovimentacao.Receita,
                         Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
-                        IdPedido = novoPedido.Id,
+                        IdPedido = novoPedido.Id.ToString(),
                         Valor = novoPedido.ListaProduto.Sum(x => x.PrecoUnidade * x.Quantidade)
                     };
 
