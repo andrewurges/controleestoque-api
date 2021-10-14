@@ -15,5 +15,8 @@ namespace ControleEstoque.Data.DTO
 
         [JsonProperty("email")]
         public string Email { get; set; }
+
+        [JsonProperty("descontoPadrao")]
+        public DescontoDTO DescontoPadrao { get; set; }
     }
 }

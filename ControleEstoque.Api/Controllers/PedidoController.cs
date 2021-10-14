@@ -149,7 +149,9 @@ namespace ControleEstoque.Api.Controllers
                     SituacaoPagamento = requestBody.SituacaoPagamento,
                 });
 
-                novoPedido.Desconto.Possui = requestBody.PossuiDesconto;
+                if (novoPedido.Desconto == null)
+                    novoPedido.Desconto = new Desconto();
+
                 novoPedido.Desconto.Tipo = requestBody.TipoDesconto;
                 novoPedido.Desconto.Valor = requestBody.ValorDesconto;
 

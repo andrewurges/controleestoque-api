@@ -5,9 +5,6 @@ namespace ControleEstoque.Data.DTO
 {
     public class DescontoDTO
     {
-        [JsonProperty("possui")]
-        public bool Possui { get; set; }
-
         [JsonProperty("tipo")]
         public ETipoDesconto Tipo { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ControleEstoque.Data.Enum;
+using Newtonsoft.Json;
 
 namespace ControleEstoque.Api.Model.Request
 {
@@ -12,5 +13,11 @@ namespace ControleEstoque.Api.Model.Request
 
         [JsonProperty("email")]
         public string Email { get; set; }
+
+        [JsonProperty("tipoDescontoPadrao")]
+        public ETipoDesconto TipoDescontoPadrao { get; set; }
+
+        [JsonProperty("valorDescontoPadrao")]
+        public double ValorDescontoPadrao { get; set; }
     }
 }

@@ -126,12 +126,20 @@ namespace ControleEstoque.Api.Controllers
         {
             try
             {
-                return Ok((ClienteDTO)_clienteService.Create(new Cliente()
+                var novoCliente = (ClienteDTO)_clienteService.Create(new Cliente()
                 {
                     NomeCompleto = requestBody.NomeCompleto,
                     Telefone = requestBody.Telefone,
                     Email = requestBody.Email
-                }));
+                });
+
+                if (novoCliente.DescontoPadrao == null)
+                    novoCliente.DescontoPadrao = new Desconto();
+
+                novoCliente.DescontoPadrao.Tipo = requestBody.TipoDescontoPadrao;
+                novoCliente.DescontoPadrao.Valor = requestBody.ValorDescontoPadrao;
+
+                return Ok(novoCliente);
             }
             catch (Exception e)
             {
@@ -159,6 +167,12 @@ namespace ControleEstoque.Api.Controllers
                 cliente.NomeCompleto = requestBody.NomeCompleto;
                 cliente.Telefone = requestBody.Telefone;
                 cliente.Email = requestBody.Email;
+
+                if (cliente.DescontoPadrao == null)
+                    cliente.DescontoPadrao = new Desconto();
+
+                cliente.DescontoPadrao.Tipo = requestBody.TipoDescontoPadrao;
+                cliente.DescontoPadrao.Valor = requestBody.ValorDescontoPadrao;
 
                 return Ok((ClienteDTO)_clienteService.Update(ObjectId.Parse(id), cliente));
             }
