@@ -2,6 +2,7 @@
 using ControleEstoque.Data.Enum;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,10 +30,10 @@ namespace ControleEstoque.Data.Model
         public List<HistoricoPedido> Historico { get; set; }
 
         [BsonElement("data_criacao")]
-        public string DataCriacao { get; set; }
+        public DateTime DataCriacao { get; set; }
 
         [BsonElement("data_atualizacao")]
-        public string DataAtualizacao { get; set; }
+        public DateTime DataAtualizacao { get; set; }
 
         [BsonElement("situacao_pedido")]
         public ESituacaoPedido SituacaoPedido { get; set; }

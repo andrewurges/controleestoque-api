@@ -1,5 +1,4 @@
 ﻿using ControleEstoque.Api.Interface;
-using ControleEstoque.Api.Model;
 using ControleEstoque.Api.Model.Request;
 using ControleEstoque.Api.Services;
 using ControleEstoque.Data.DTO;

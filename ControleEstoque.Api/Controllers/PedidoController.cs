@@ -63,7 +63,7 @@ namespace ControleEstoque.Api.Controllers
             try
             {
                 List<PedidoDTO> lst = _pedidoService.GetAll().Select(x => (PedidoDTO)x)
-                    .OrderByDescending(x => DateHelper.GetDateUTC(x.DataCriacao))
+                    .OrderByDescending(x => x.DataCriacao)
                     .ToList();
 
                 return Ok(GetPedidoEnumerable(lst));
@@ -86,7 +86,7 @@ namespace ControleEstoque.Api.Controllers
             try
             {
                 var agrupado = _pedidoService.GetAll().Select(x => (PedidoDTO)x)
-                    .OrderByDescending(x => DateHelper.GetDateUTC(x.DataCriacao))
+                    .OrderByDescending(x => x.DataCriacao)
                     .GroupBy(x => x.DataCriacao)
                     .ToList();
 
@@ -159,7 +159,7 @@ namespace ControleEstoque.Api.Controllers
                     var movimentacao = new Movimentacao()
                     {
                         Tipo = ETipoMovimentacao.Receita,
-                        Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                        Data = DateHelper.GetCurrentDateTime(),
                         IdPedido = novoPedido.Id.ToString(),
                         Valor = novoPedido.ListaProduto.Sum(x => x.PrecoUnidade * x.Quantidade)
                     };
@@ -202,7 +202,7 @@ namespace ControleEstoque.Api.Controllers
                     var movimentacao = new Movimentacao()
                     {
                         Tipo = ETipoMovimentacao.Receita,
-                        Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                        Data = DateHelper.GetCurrentDateTime(),
                         IdPedido = pedido.Id.ToString(),
                         Valor = pedido.ListaProduto.Sum(x => x.PrecoUnidade * x.Quantidade)
                     };

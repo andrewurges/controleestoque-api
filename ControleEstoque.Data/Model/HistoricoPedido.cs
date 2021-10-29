@@ -1,6 +1,7 @@
 ﻿using ControleEstoque.Data.DTO;
 using ControleEstoque.Data.Enum;
 using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 namespace ControleEstoque.Data.Model
 {
@@ -10,7 +11,7 @@ namespace ControleEstoque.Data.Model
         public ESituacaoPedido SituacaoPedido { get; set; }
 
         [BsonElement("data")]
-        public string Data { get; set; }
+        public DateTime Data { get; set; }
 
         public static implicit operator HistoricoPedidoDTO(HistoricoPedido model)
         {
