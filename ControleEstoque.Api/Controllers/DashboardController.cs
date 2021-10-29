@@ -114,7 +114,7 @@ namespace ControleEstoque.Api.Controllers
             {
                 List<PedidoDTO> lst = _pedidoService.GetAll(x => x.SituacaoPedido == ESituacaoPedido.AFazer)
                     .Select(x => (PedidoDTO)x)
-                    .OrderByDescending(x => DateTime.ParseExact(x.DataCriacao, "dd/MM/yyyy", CultureInfo.InvariantCulture))
+                    .OrderByDescending(x => x.DataCriacao)
                     .ToList();
 
                 return Ok(new TotalFazerResponse()

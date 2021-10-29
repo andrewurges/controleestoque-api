@@ -13,5 +13,10 @@ namespace ControleEstoque.Api.Helpers
                 CultureInfo.CreateSpecificCulture("pt-BR")));
             return new DateTime(dataConvertida.Year, dataConvertida.Month, dataConvertida.Day, 0, 0, 0, DateTimeKind.Utc);
         }
+
+        public static DateTime GetCurrentDateTime()
+        {
+            return TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
+        }
     }
 }

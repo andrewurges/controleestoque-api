@@ -1,5 +1,6 @@
 ﻿using ControleEstoque.Data.Enum;
 using Newtonsoft.Json;
+using System;
 
 namespace ControleEstoque.Data.DTO
 {
@@ -9,6 +10,6 @@ namespace ControleEstoque.Data.DTO
         public ESituacaoPedido SituacaoPedido { get; set; }
 
         [JsonProperty("data")]
-        public string Data { get; set; }
+        public DateTime Data { get; set; }
     }
 }

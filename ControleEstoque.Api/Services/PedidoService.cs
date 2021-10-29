@@ -1,4 +1,5 @@
-﻿using ControleEstoque.Api.Interface;
+﻿using ControleEstoque.Api.Helpers;
+using ControleEstoque.Api.Interface;
 using ControleEstoque.Api.Model;
 using ControleEstoque.Data.Enum;
 using ControleEstoque.Data.Model;
@@ -33,12 +34,12 @@ namespace ControleEstoque.Api.Services
 
         public Pedido Create(Pedido model)
         {
-            model.DataCriacao = DateTime.Now.ToString("dd/MM/yyyy");
-            model.DataAtualizacao = "";
+            model.DataCriacao = DateHelper.GetCurrentDateTime();
+            model.DataAtualizacao = DateHelper.GetCurrentDateTime();
             model.SituacaoPedido = ESituacaoPedido.AFazer;
             model.Historico.Add(new HistoricoPedido()
             {
-                Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                Data = DateHelper.GetCurrentDateTime(),
                 SituacaoPedido = ESituacaoPedido.AFazer
             });
 
@@ -47,7 +48,7 @@ namespace ControleEstoque.Api.Services
 
         public Pedido Update(ObjectId id, Pedido model)
         {
-            model.DataAtualizacao = DateTime.Now.ToString("dd/MM/yyyy");
+            model.DataAtualizacao = DateHelper.GetCurrentDateTime();
 
             if (model.Historico.Count > 0)
             {
@@ -56,7 +57,7 @@ namespace ControleEstoque.Api.Services
                 {
                     model.Historico.Add(new HistoricoPedido()
                     {
-                        Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                        Data = DateHelper.GetCurrentDateTime(),
                         SituacaoPedido = model.SituacaoPedido
                     });
                 }

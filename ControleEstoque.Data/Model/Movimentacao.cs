@@ -2,6 +2,7 @@
 using ControleEstoque.Data.Enum;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +22,7 @@ namespace ControleEstoque.Data.Model
         public ETipoMovimentacao Tipo { get; set; }
 
         [BsonElement("data")]
-        public string Data { get; set; }
+        public DateTime Data { get; set; }
 
         [BsonElement("id_pedido")]
         public string IdPedido { get; set; }

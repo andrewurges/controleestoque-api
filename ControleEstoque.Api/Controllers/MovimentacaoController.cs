@@ -68,7 +68,7 @@ namespace ControleEstoque.Api.Controllers
             try
             {
                 List<MovimentacaoDTO> lst = _movimentacaoService.GetAll().Select(x => (MovimentacaoDTO)x)
-                    .OrderByDescending(x => DateHelper.GetDateUTC(x.Data))
+                    .OrderByDescending(x => x.Data)
                     .ToList();
 
                 return Ok(GetMovimentacaoEnumerable(lst));
@@ -94,7 +94,7 @@ namespace ControleEstoque.Api.Controllers
                 var novaMovimentacao = (MovimentacaoDTO)_movimentacaoService.Create(new Movimentacao()
                 {
                     Tipo = ETipoMovimentacao.Receita,
-                    Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                    Data = DateHelper.GetCurrentDateTime(),
                     IdPedido = requestBody.IdPedido
                 });
 
@@ -123,7 +123,7 @@ namespace ControleEstoque.Api.Controllers
                 var novaMovimentacao = (MovimentacaoDTO)_movimentacaoService.Create(new Movimentacao()
                 {
                     Tipo = ETipoMovimentacao.Despesa,
-                    Data = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                    Data = DateHelper.GetCurrentDateTime(),
                     ItensEstoque = requestBody.ItensEstoque
                 });
 

@@ -1,5 +1,6 @@
 ﻿using ControleEstoque.Data.Enum;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace ControleEstoque.Data.DTO
@@ -13,7 +14,7 @@ namespace ControleEstoque.Data.DTO
         public ETipoMovimentacao Tipo { get; set; }
 
         [JsonProperty("data")]
-        public string Data { get; set; }
+        public DateTime Data { get; set; }
 
         [JsonProperty("idPedido")]
         public string IdPedido { get; set; }
