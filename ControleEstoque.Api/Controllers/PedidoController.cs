@@ -87,7 +87,7 @@ namespace ControleEstoque.Api.Controllers
             {
                 var agrupado = _pedidoService.GetAll().Select(x => (PedidoDTO)x)
                     .OrderByDescending(x => x.DataCriacao)
-                    .GroupBy(x => x.DataCriacao)
+                    .GroupBy(x => x.DataCriacao.ToString("dd/MM/yyyy"))
                     .ToList();
 
                 var lst = agrupado.Select(x => new
