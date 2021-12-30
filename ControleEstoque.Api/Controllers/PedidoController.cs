@@ -240,9 +240,15 @@ namespace ControleEstoque.Api.Controllers
                             t.Quantidade,
                             t.PrecoUnidade
                         },
-                    e.Historico,
-                    e.DataCriacao,
-                    e.DataAtualizacao,
+                    Historico =
+                        from t in e.Historico.AsQueryable()
+                        select new
+                        {
+                            t.SituacaoPedido,
+                            Data = t.Data.ToString("dd/MM/yyyy HH:mm")
+                        },
+                    DataCriacao = e.DataCriacao.ToString("dd/MM/yyyy HH:mm"),
+                    DataAtualizacao = e.DataAtualizacao.ToString("dd/MM/yyyy HH:mm"),
                     e.SituacaoPedido,
                     e.SituacaoPagamento,
                     e.Desconto,
