@@ -72,7 +72,7 @@ namespace ControleEstoque.Api.Controllers
             {
                 var agrupado = _clienteService.GetAll().Select(x => (ClienteDTO)x)
                     .OrderBy(x => x.NomeCompleto)
-                    .GroupBy(x => x.NomeCompleto[0])
+                    .GroupBy(x => x.NomeCompleto[0].ToString().ToUpper())
                     .ToList();
 
                 var lst = agrupado.Select(x => new
