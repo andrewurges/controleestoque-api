@@ -16,7 +16,7 @@ namespace ControleEstoque.Api.Helpers
 
         public static DateTime GetCurrentDateTime()
         {
-            return TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
+            return TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Utc);
         }
     }
 }
