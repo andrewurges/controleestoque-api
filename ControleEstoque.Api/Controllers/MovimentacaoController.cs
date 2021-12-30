@@ -146,7 +146,7 @@ namespace ControleEstoque.Api.Controllers
                 {
                     e.Id,
                     e.Tipo,
-                    e.Data,
+                    Data = e.Data.ToString("dd/MM/yyyy HH:mm"),
                     Pedido = !string.IsNullOrEmpty(e.IdPedido) ? GetPedidoEnumerable(_pedidoService.Get(ObjectId.Parse(e.IdPedido))) : null,
                     ItensEstoque = e.ItensEstoque != null && e.ItensEstoque.Count > 0 ?
                         from t in e.ItensEstoque.AsQueryable()
@@ -172,9 +172,15 @@ namespace ControleEstoque.Api.Controllers
                             t.Quantidade,
                             t.PrecoUnidade
                         },
-            pedido.Historico,
-            pedido.DataCriacao,
-            pedido.DataAtualizacao,
+            Historico =
+                        from t in pedido.Historico.AsQueryable()
+                        select new
+                        {
+                            t.SituacaoPedido,
+                            Data = t.Data.ToString("dd/MM/yyyy HH:mm")
+                        },
+            DataCriacao = pedido.DataCriacao.ToString("dd/MM/yyyy HH:mm"),
+            DataAtualizacao = pedido.DataAtualizacao.ToString("dd/MM/yyyy HH:mm"),
             pedido.SituacaoPedido,
             pedido.SituacaoPagamento,
             pedido.Desconto,
